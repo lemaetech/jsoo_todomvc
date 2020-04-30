@@ -1,15 +1,23 @@
-.PHONY : build # default target
+.PHONY : b build # default target
 b build:  # b or build 
 	dune b 
 
-.PHONY : prod 
+.PHONY : p prod 
 p prod : 
 	dune b --profile release
 
-.PHONY : fmt 
+.PHONY : f fmt 
 f fmt : 
 	dune build @fmt --auto-promote
 
-.PHONY : clean
+.PHONY : c clean
 c clean : 
 	dune clean 
+
+.PHONY : install
+install : 
+	opam switch create .
+
+.PHONY : update
+update :
+	opam install ./jsoo_todomvc.opam.locked --deps-only
