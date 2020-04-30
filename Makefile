@@ -14,10 +14,10 @@ f fmt :
 c clean : 
 	@dune clean 
 
-.PHONY : install
-install : 
-	@opam switch create .
+.PHONY : lock
+lock : 
+	@opam lock .
 
 .PHONY : update
 update :
-	@opam install ./jsoo_todomvc.opam.locked --deps-only
+	@opam install . --locked --deps-only
