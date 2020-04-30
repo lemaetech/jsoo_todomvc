@@ -18,6 +18,6 @@ c clean :
 lock : 
 	@opam lock .
 
-.PHONY : update
-update :
+.PHONY : install
+install :
 	@opam install . --locked --deps-only
