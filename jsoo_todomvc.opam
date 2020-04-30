@@ -3,6 +3,7 @@ opam-version: "2.0"
 version: "1.0.0"
 synopsis: "TODO MVC app in js_of_ocaml"
 description: "Uses js_of_ocaml provided libraries only."
+maintainer: ["Bikal Lem"]
 authors: ["Bikal Lem"]
 license: "MPL2"
 homepage: "https://github.com/bikallem/jsoo_todomvc"

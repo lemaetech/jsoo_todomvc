@@ -13,6 +13,8 @@
 
 (authors "Bikal Lem")
 
+(maintainers "Bikal Lem")
+
 (package
  (name jsoo_todomvc)
  (synopsis "TODO MVC app in js_of_ocaml")
