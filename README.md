@@ -9,3 +9,7 @@ git clone git@github.com:bikallem/jsoo_todomvc.git
 cd jsoo_todomvc
 opam switch create .
 ```
+
+## Updating dependencies
+
+`opam install ./jsoo_todomvc.opam.locked --deps-only`
