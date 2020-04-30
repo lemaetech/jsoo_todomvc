@@ -7,9 +7,9 @@ Todo MVC implemented in js_of_ocaml
 ```
 git clone git@github.com:bikallem/jsoo_todomvc.git
 cd jsoo_todomvc
-opam switch create .
+make install
 ```
 
 ## Updating dependencies
 
-`opam install ./jsoo_todomvc.opam.locked --deps-only`
+`make update`
