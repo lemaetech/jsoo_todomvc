@@ -22,6 +22,10 @@
    (>= 4.10.0))
   (dune
    (>= 2.5))
+  (merlin
+   (>= 3.3.4))
+  (ocamlformat
+   (>= 0.14.1))
   (js_of_ocaml
    (>= 3.6.0))
   (js_of_ocaml-ppx
