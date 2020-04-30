@@ -9,7 +9,7 @@
 (source
  (github bikallem/jsoo_todomvc))
 
-(license MPL2)
+(license MPL-2.0)
 
 (authors "Bikal Lem")
 

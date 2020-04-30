@@ -5,7 +5,7 @@ synopsis: "TODO MVC app in js_of_ocaml"
 description: "Uses js_of_ocaml provided libraries only."
 maintainer: ["Bikal Lem"]
 authors: ["Bikal Lem"]
-license: "MPL2"
+license: "MPL-2.0"
 homepage: "https://github.com/bikallem/jsoo_todomvc"
 bug-reports: "https://github.com/bikallem/jsoo_todomvc/issues"
 depends: [
