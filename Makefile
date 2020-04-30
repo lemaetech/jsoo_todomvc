@@ -21,3 +21,7 @@ lock :
 .PHONY : install
 install :
 	@opam install . --locked --deps-only
+
+.PHONY : switch 
+switch : 
+	@opam switch create . --locked --deps-only
