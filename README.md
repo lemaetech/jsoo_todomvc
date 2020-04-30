@@ -1,4 +1,4 @@
-# jsoo_todomvc
+# Todo app in js_of_ocaml ⚡
 
 Todo MVC implemented in js_of_ocaml
 
