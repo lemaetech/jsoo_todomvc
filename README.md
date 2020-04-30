@@ -13,3 +13,9 @@ make install
 ## Updating dependencies
 
 `make update`
+
+## js_of_ocaml resources
+
+1. https://dune.readthedocs.io/en/latest/dune-files.html#js-of-ocaml - configure `js_of_ocaml` compiler in dune
+
+2. https://dune.readthedocs.io/en/latest/jsoo.html - getting started with `js_of_ocaml` projects with dune.
