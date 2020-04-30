@@ -28,6 +28,8 @@
    (>= 3.3.4))
   (ocamlformat
    (>= 0.14.1))
+  (utop
+   (>= 2.5.0))
   (js_of_ocaml
    (>= 3.6.0))
   (js_of_ocaml-ppx
