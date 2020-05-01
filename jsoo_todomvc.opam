@@ -19,6 +19,7 @@ depends: [
   "js_of_ocaml-lwt" {>= "3.6.0"}
   "js_of_ocaml-ppx_deriving_json" {>= "3.6.0"}
   "js_of_ocaml-tyxml" {>= "3.6.0"}
+  "gen_js_api"
 ]
 build: [
   ["dune" "subst"] {pinned}
@@ -35,3 +36,6 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/bikallem/jsoo_todomvc.git"
+pin-depends: [
+ ["gen_js_api.dev" "https://github.com/LexiFi/gen_js_api.git"]
+]
