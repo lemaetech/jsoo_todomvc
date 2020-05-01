@@ -20,4 +20,7 @@ dev-switch :
 	opam switch create -y . --deps-only --with-test --locked
 	opam install -y . --locked --deps-only
 
-.PHONY: b build p prod f fmt c clean lock install dev-switch
+open :
+	xdg-open _build/default/src/index.html
+
+.PHONY: b build p prod f fmt c clean lock install dev-switch open 
