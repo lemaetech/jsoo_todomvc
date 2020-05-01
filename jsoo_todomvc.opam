@@ -37,5 +37,5 @@ build: [
 ]
 dev-repo: "git+https://github.com/bikallem/jsoo_todomvc.git"
 pin-depends: [
- ["gen_js_api.dev" "https://github.com/LexiFi/gen_js_api.git"]
+ ["gen_js_api.dev" "git+https://github.com/LexiFi/gen_js_api.git"]
 ]
