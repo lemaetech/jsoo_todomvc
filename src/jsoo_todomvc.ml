@@ -31,5 +31,5 @@ let () =
   let _ =
     Dom_html.(
       addEventListener document dom_content_loaded_evt event_handler
-        (Js.bool false)) in
+        (Js.bool true)) in
   ()
