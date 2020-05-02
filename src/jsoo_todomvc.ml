@@ -1,6 +1,4 @@
 open Js_of_ocaml_tyxml.Tyxml_js
-open Js_of_ocaml_lwt
-open Lwt.Infix
 open Js_of_ocaml
 
 let todo_app = Html5.(section ~a:[a_class ["todoapp"]] [])
@@ -16,9 +14,8 @@ let info_footer =
       ; p [txt "Part of "; a ~a:[a_href "http://todomvc.com"] [txt "TodoMVC"]]
       ])
 
-let main () =
-  (* Firebug.console##log info_footer ; *)
-
+let main _ =
+  Firebug.console##log info_footer ;
   (* let now = new%js Js.date_now in *)
   (* let date = now##toString in *)
   (* let s = Js.to_string date ^ " : Hello world!" in *)
@@ -26,6 +23,13 @@ let main () =
   let app = Dom_html.getElementById "app" in
   Dom.appendChild app (To_dom.of_section todo_app) ;
   Dom.appendChild app (To_dom.of_footer info_footer) ;
-  Lwt.return_unit
+  Js.bool true
 
-let _ = Lwt_js_events.domContentLoaded () >>= main
+let () =
+  let dom_content_loaded_evt = Dom_events.Typ.domContentLoaded in
+  let event_handler = Dom.handler main in
+  let _ =
+    Dom_html.(
+      addEventListener document dom_content_loaded_evt event_handler
+        (Js.bool false)) in
+  ()
