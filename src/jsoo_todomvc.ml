@@ -27,9 +27,4 @@ let main _ =
 
 let () =
   let onload_handler = Dom.handler main in
-  Dom_html.window##.onload := onload_handler ;
-  (* let _ = *)
-  (*   Dom_html.( *)
-  (*     addEventListener document dom_content_loaded_evt event_handler *)
-  (*       (Js.bool true)) in *)
-  ()
+  Dom_html.window##.onload := onload_handler
