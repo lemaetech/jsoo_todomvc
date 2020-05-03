@@ -30,10 +30,9 @@ let main_section =
           [ li [a ~a:[a_href "#/"] [txt "All"]]
           ; li [a ~a:[a_href "#/active"] [txt "Active"]]
           ; li [a ~a:[a_href "#/completed"] [txt "Completed"]] ] ] in
-  Html5.(
-    section
-      ~a:[a_class ["main"]; a_style "display:none"]
-      [toggle_all_chkbox; toggle_all_lbl; todo_list; footer_section])
+  section
+    ~a:[a_class ["main"]; a_style "display:none"]
+    [toggle_all_chkbox; toggle_all_lbl; todo_list; footer_section]
 
 let todo_app = Html5.(section ~a:[a_class ["todoapp"]] [new_todo; main_section])
 
