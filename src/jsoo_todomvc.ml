@@ -12,7 +12,30 @@ let new_todo =
             ; a_autofocus () ]
           () ])
 
-let todo_app = Html5.(section ~a:[a_class ["todoapp"]] [new_todo])
+let main_section =
+  let open Html5 in
+  let toggle_all_chkbox =
+    input
+      ~a:[a_id "toggle-all"; a_class ["toggle-all"]; a_input_type `Checkbox]
+      () in
+  let toggle_all_lbl =
+    label ~a:[a_label_for "toggle-all"] [txt "Mark all as complete"] in
+  let todo_list = ul ~a:[a_class ["todo-list"]] [] in
+  let footer_section =
+    footer
+      ~a:[a_class ["footer"]]
+      [ span ~a:[a_class ["todo-count"]] []
+      ; ul
+          ~a:[a_class ["filters"]]
+          [ li [a ~a:[a_href "#/"] [txt "All"]]
+          ; li [a ~a:[a_href "#/active"] [txt "Active"]]
+          ; li [a ~a:[a_href "#/completed"] [txt "Completed"]] ] ] in
+  Html5.(
+    section
+      ~a:[a_class ["main"]; a_style "display:none"]
+      [toggle_all_chkbox; toggle_all_lbl; todo_list; footer_section])
+
+let todo_app = Html5.(section ~a:[a_class ["todoapp"]] [new_todo; main_section])
 
 let info_footer =
   Html5.(
