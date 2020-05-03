@@ -45,6 +45,9 @@ let main_section : Todo.t list -> [> Html_types.section ] Html5.elt =
           ; li [ a ~a:[ a_href "#/active" ] [ txt "Active" ] ]
           ; li [ a ~a:[ a_href "#/completed" ] [ txt "Completed" ] ]
           ]
+      ; button
+          ~a:[ a_class [ "clear-completed" ]; a_style "display:block" ]
+          [ txt "Clear completed" ]
       ]
   in
   let visibility = if List.length todos > 0 then "" else "display:none" in
