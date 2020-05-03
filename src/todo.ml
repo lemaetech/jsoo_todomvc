@@ -13,4 +13,7 @@ let create : ?completed:bool -> string -> t =
 let render : t -> [> Html_types.li ] Html5.elt =
  fun t ->
   li
-    [ input ~a:[ a_class [ "toggle" ]; a_input_type `Checkbox ] (); label [ txt t.todo ] ]
+    [ input ~a:[ a_class [ "toggle" ]; a_input_type `Checkbox ] ()
+    ; label [ txt t.todo ]
+    ; button ~a:[ a_class [ "destroy" ] ] []
+    ]
