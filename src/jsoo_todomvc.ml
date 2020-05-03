@@ -25,35 +25,10 @@ let main_section : Todo.t list -> [> Html_types.section ] Html5.elt =
   let toggle_all_lbl =
     label ~a:[ a_label_for "toggle-all" ] [ txt "Mark all as complete" ]
   in
-  let footer_section =
-    let todo_remaining_txt =
-      todos
-      |> List.filter (fun todo -> not @@ Todo.completed todo)
-      |> List.length
-      |> fun todo_count ->
-      Printf.sprintf
-        "%i %s left"
-        todo_count
-        (if todo_count = 1 then "item" else if todo_count > 1 then "items" else "")
-    in
-    footer
-      ~a:[ a_class [ "footer" ] ]
-      [ span ~a:[ a_class [ "todo-count" ] ] [ txt todo_remaining_txt ]
-      ; ul
-          ~a:[ a_class [ "filters" ] ]
-          [ li [ a ~a:[ a_href "#/" ] [ txt "All" ] ]
-          ; li [ a ~a:[ a_href "#/active" ] [ txt "Active" ] ]
-          ; li [ a ~a:[ a_href "#/completed" ] [ txt "Completed" ] ]
-          ]
-      ; button
-          ~a:[ a_class [ "clear-completed" ]; a_style "display:block" ]
-          [ txt "Clear completed" ]
-      ]
-  in
   let visibility = if List.length todos > 0 then "" else "display:none" in
   section
     ~a:[ a_class [ "main" ]; a_style visibility ]
-    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; footer_section ]
+    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render todos ]
 
 let info_footer =
   Html5.(
