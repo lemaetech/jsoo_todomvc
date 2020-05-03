@@ -23,7 +23,9 @@
   (ocaml
    (>= 4.10.0))
   (dune
-   (>= 2.5))
+   (and
+    :build
+    (>= 2.5)))
   (merlin
    (>= 3.3.4))
   (ocamlformat
