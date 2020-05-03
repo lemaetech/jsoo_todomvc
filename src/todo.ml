@@ -1,5 +1,5 @@
 open Js_of_ocaml_tyxml.Tyxml_js
-open Html5
+open Html
 
 type t =
   { todo : string
@@ -12,7 +12,7 @@ let create : ?completed:bool -> string -> t =
 
 let completed t = t.completed
 
-let render : t -> [> Html_types.li ] Html5.elt =
+let render : t -> [> Html_types.li ] elt =
  fun t ->
   let completed_attr = if completed t then "completed" else "" in
   let attrs =

@@ -1,4 +1,4 @@
-open Js_of_ocaml_tyxml.Tyxml_js.Html5
+open Js_of_ocaml_tyxml.Tyxml_js.Html
 open Js_of_ocaml
 
 let selected_attr frag =
