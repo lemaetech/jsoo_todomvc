@@ -26,9 +26,19 @@ let main_section : Todo.t list -> [> Html_types.section ] Html5.elt =
     label ~a:[ a_label_for "toggle-all" ] [ txt "Mark all as complete" ]
   in
   let footer_section =
+    let todo_remaining_txt =
+      todos
+      |> List.filter (fun todo -> not @@ Todo.completed todo)
+      |> List.length
+      |> fun todo_count ->
+      Printf.sprintf
+        "%i %s left"
+        todo_count
+        (if todo_count = 1 then "item" else if todo_count > 1 then "items" else "")
+    in
     footer
       ~a:[ a_class [ "footer" ] ]
-      [ span ~a:[ a_class [ "todo-count" ] ] []
+      [ span ~a:[ a_class [ "todo-count" ] ] [ txt todo_remaining_txt ]
       ; ul
           ~a:[ a_class [ "filters" ] ]
           [ li [ a ~a:[ a_href "#/" ] [ txt "All" ] ]
