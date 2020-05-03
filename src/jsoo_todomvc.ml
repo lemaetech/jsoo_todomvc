@@ -1,7 +1,18 @@
 open Js_of_ocaml_tyxml.Tyxml_js
 open Js_of_ocaml
 
-let todo_app = Html5.(section ~a:[a_class ["todoapp"]] [])
+let new_todo =
+  Html5.(
+    header
+      ~a:[a_class ["header"]]
+      [ h1 [txt "todos"]
+      ; input
+          ~a:
+            [ a_class ["new-todo"]; a_placeholder "What needs to be done?"
+            ; a_autofocus () ]
+          () ])
+
+let todo_app = Html5.(section ~a:[a_class ["todoapp"]] [new_todo])
 
 let info_footer =
   Html5.(
@@ -16,10 +27,6 @@ let info_footer =
 
 let main _ =
   Firebug.console##log info_footer ;
-  (* let now = new%js Js.date_now in *)
-  (* let date = now##toString in *)
-  (* let s = Js.to_string date ^ " : Hello world!" in *)
-  (* let html = Html5.(div [txt s]) in *)
   let app = Dom_html.getElementById "app" in
   Dom.appendChild app (To_dom.of_section todo_app) ;
   Dom.appendChild app (To_dom.of_footer info_footer) ;
