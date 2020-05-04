@@ -1,8 +1,6 @@
 (executable
  (name jsoo_todomvc)
  (modes js)
- (flags
-  (:standard (-g)))
  (libraries uuidm js_of_ocaml js_of_ocaml-lwt js_of_ocaml-tyxml lwt)
  (preprocess
   (pps js_of_ocaml-ppx js_of_ocaml-ppx_deriving_json)))
