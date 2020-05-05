@@ -10,8 +10,12 @@ let render todo_rlist =
     then
       (let* target = evt##.target in
        let+ input = CoerceTo.input target in
-       Js.to_string input##.value |> Todo.create)
-      |> fun o -> Opt.iter o (fun todo -> RList.snoc todo todo_rlist)
+       let todo = Js.to_string input##.value |> Todo.create in
+       todo, fun () -> input##.value := Js.string "")
+      |> fun o ->
+      Opt.iter o (fun (todo, reset) ->
+          RList.snoc todo todo_rlist;
+          reset ())
     else ();
     true
   in
