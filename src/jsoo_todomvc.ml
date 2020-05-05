@@ -1,9 +1,10 @@
 open Js_of_ocaml
 open Std
 
-let main_section : Todo.t RList.t -> Todo.t list -> [> Html_types.section ] Html.elt =
- fun rl todos ->
+let main_section : Todo.t RList.t -> [> Html_types.section ] Html.elt =
+ fun rl ->
   let open Html in
+  let todos = RList.value rl in
   let todo_ul = R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map Todo.render rl in
   let toggle_all_chkbox =
     input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
@@ -38,9 +39,7 @@ let main _ =
   let rl, rhandle = RList.create todos in
   let todo_app =
     Html.(
-      section
-        ~a:[ a_class [ "todoapp" ] ]
-        [ New_todo.render rhandle; main_section rl todos ])
+      section ~a:[ a_class [ "todoapp" ] ] [ New_todo.render rhandle; main_section rl ])
   in
   Dom.appendChild appElem (To_dom.of_section todo_app);
   Dom.appendChild appElem (To_dom.of_footer info_footer);
