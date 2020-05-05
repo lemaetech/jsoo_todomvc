@@ -14,11 +14,14 @@ let completed t = t.completed
 
 let render : t -> [> Html_types.li ] elt =
  fun t ->
-  let completed_attr = if completed t then [ a_class [ "completed" ] ] else [] in
-  let attrs =
+  let li_attrs = if completed t then [ a_class [ "completed" ] ] else [] in
+  let input_attrs =
     [ a_class [ "toggle" ]; a_input_type `Checkbox ]
     |> fun attrs -> if completed t then a_checked () :: attrs else attrs
   in
   li
-    ~a:completed_attr
-    [ input ~a:attrs (); label [ txt t.todo ]; button ~a:[ a_class [ "destroy" ] ] [] ]
+    ~a:li_attrs
+    [ input ~a:input_attrs ()
+    ; label [ txt t.todo ]
+    ; button ~a:[ a_class [ "destroy" ] ] []
+    ]
