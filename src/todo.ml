@@ -12,8 +12,7 @@ let create : ?completed:bool -> string -> t =
 
 let completed t = t.completed
 
-let render : t -> [> Html_types.li ] elt =
- fun t ->
+let render t =
   let li_attrs = if completed t then [ a_class [ "completed" ] ] else [] in
   let input_attrs =
     [ a_class [ "toggle" ]; a_input_type `Checkbox ]
