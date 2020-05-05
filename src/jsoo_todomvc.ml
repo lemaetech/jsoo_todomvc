@@ -1,24 +1,10 @@
-open Js_of_ocaml_tyxml.Tyxml_js
 open Js_of_ocaml
+open Std
 
-let new_todo : [> Html_types.header ] Html.elt =
-  Html.(
-    header
-      ~a:[ a_class [ "header" ] ]
-      [ h1 [ txt "todos" ]
-      ; input
-          ~a:
-            [ a_class [ "new-todo" ]
-            ; a_placeholder "What needs to be done?"
-            ; a_autofocus ()
-            ]
-          ()
-      ])
-
-let main_section : Todo.t list -> [> Html_types.section ] Html.elt =
- fun todos ->
+let main_section : Todo.t RList.t -> Todo.t list -> [> Html_types.section ] Html.elt =
+ fun rl todos ->
   let open Html in
-  let todo_ul = ul ~a:[ a_class [ "todo-list" ] ] @@ List.map Todo.render todos in
+  let todo_ul = R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map Todo.render rl in
   let toggle_all_chkbox =
     input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
   in
@@ -49,8 +35,12 @@ let main _ =
     [ true, "Buy a unicorn"; false, "Eat haagen daz ice-cream, yummy!" ]
     |> List.map (fun (completed, todo) -> Todo.create ~completed todo)
   in
+  let rl, rhandle = RList.create todos in
   let todo_app =
-    Html.(section ~a:[ a_class [ "todoapp" ] ] [ new_todo; main_section todos ])
+    Html.(
+      section
+        ~a:[ a_class [ "todoapp" ] ]
+        [ New_todo.render rhandle; main_section rl todos ])
   in
   Dom.appendChild appElem (To_dom.of_section todo_app);
   Dom.appendChild appElem (To_dom.of_footer info_footer);

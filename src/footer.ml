@@ -5,7 +5,7 @@ let selected_attr frag =
   let frag' = Url.Current.get_fragment () in
   let frag' = if String.equal frag' "" then "/" else frag' in
   let frag' = String.trim frag' in
-  Firebug.console##log (Js.string frag');
+  (* Firebug.console##log (Js.string frag'); *)
   if String.equal frag' frag then a_class [ "selected" ] else a_class []
 
 let render todos =
