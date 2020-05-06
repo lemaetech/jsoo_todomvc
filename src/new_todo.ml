@@ -5,7 +5,7 @@ open Html
 let render todo_rlist =
   let open Opt.O in
   let handle_key_down evt =
-    (if Int.equal evt##.keyCode 13 (* ENTER key pressed. *)
+    if evt##.keyCode = 13 (* ENTER key pressed. *)
     then
       (let* target = evt##.target in
        let+ input = CoerceTo.input target in
@@ -14,7 +14,8 @@ let render todo_rlist =
       |> fun o ->
       Opt.iter o (fun (todo, reset) ->
           RList.snoc todo todo_rlist;
-          reset ()));
+          reset ())
+    else ();
     true
   in
   header
