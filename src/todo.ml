@@ -15,8 +15,14 @@ let create ?(completed = false) todo =
 
 let completed t = t.completed
 
-let handle_dblclick t _ =
+let handle_dblclick t todo_input _ =
   t.set_editing true;
+  let dom_inp = To_dom.of_input todo_input in
+  dom_inp##focus;
+  true
+
+let handle_onblur t _ =
+  t.set_editing false;
   true
 
 let render t =
@@ -33,13 +39,24 @@ let render t =
     [ a_class [ "toggle" ]; a_input_type `Checkbox ]
     |> fun attrs -> if completed t then a_checked () :: attrs else attrs
   in
+  let todo_input =
+    input
+      ~a:
+        [ a_id (Uuidm.to_string t.id)
+        ; a_input_type `Text
+        ; a_class [ "edit" ]
+        ; a_value t.todo
+        ; a_onblur @@ handle_onblur t
+        ]
+      ()
+  in
   li
     ~a:[ li_cls_attr ]
     [ div
         ~a:[ a_class [ "view" ] ]
         [ input ~a:input_attrs ()
-        ; label ~a:[ a_ondblclick @@ handle_dblclick t ] [ txt t.todo ]
+        ; label ~a:[ a_ondblclick @@ handle_dblclick t todo_input ] [ txt t.todo ]
         ; button ~a:[ a_class [ "destroy" ] ] []
         ]
-    ; input ~a:[ a_class [ "edit" ]; a_value t.todo ] ()
+    ; todo_input
     ]
