@@ -1,4 +1,3 @@
-open Js_of_ocaml
 open Std
 open Dom_html
 open Html

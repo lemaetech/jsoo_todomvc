@@ -1,3 +1,5 @@
+include Js_of_ocaml
+
 module Opt = struct
   include Js_of_ocaml.Js.Opt
 

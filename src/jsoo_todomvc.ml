@@ -1,4 +1,3 @@
-open Js_of_ocaml
 open Std
 
 let main_section : Todo.t RList.t -> [> Html_types.section ] Html.elt =
@@ -30,7 +29,6 @@ let info_footer =
       ])
 
 let main _ =
-  Firebug.console##log info_footer;
   let appElem = Dom_html.getElementById "app" in
   let todos =
     [ true, "Buy a unicorn"; false, "Eat haagen daz ice-cream, yummy!" ]
