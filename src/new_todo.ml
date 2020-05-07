@@ -13,7 +13,7 @@ let render ~dispatch =
        todo, fun () -> input##.value := Js.string "")
       |> fun o ->
       Opt.iter o (fun (todo, reset) ->
-          dispatch @@ Some (Action.Add todo);
+          dispatch @@ Some (`Add todo);
           reset ())
     else ();
     true

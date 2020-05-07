@@ -1,22 +1,37 @@
 open Std
 
+module Indextbl = Hashtbl.Make (struct
+  type t = Uuidm.t
+
+  let equal = Uuidm.equal
+  let hash (u : Uuidm.t) = Hashtbl.hash u
+end)
+
 type t =
   { rl : Todo.t RList.t
   ; rh : Todo.t RList.handle
+  ; index_tbl : int Indextbl.t
   }
 
 let create todos =
   let rl, rh = RList.create todos in
-  { rl; rh }
+  let index_tbl = Indextbl.create (List.length todos) in
+  List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos;
+  { rl; rh; index_tbl }
 
-let update_state t = function
-  | Action.Add todo -> RList.snoc todo t.rh
-  | Action.Update _todo -> ()
+let update_state t action =
+  match action with
+  | `Add todo -> RList.snoc todo t.rh
+  | `Update todo ->
+    let index = Todo.id todo |> Indextbl.find_opt t.index_tbl in
+    Option.iter (fun index -> RList.update todo index t.rh) index
 
-let main_section rl =
+let main_section rl dispatch =
   let open Html in
   let todos = RList.value rl in
-  let todo_ul = R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map Todo.render rl in
+  let todo_ul =
+    R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map (Todo.render ~dispatch) rl
+  in
   let toggle_all_chkbox =
     input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
   in
@@ -48,7 +63,7 @@ let main todos (_ : #Dom_html.event Js.t) =
     Html.(
       section
         ~a:[ a_class [ "todoapp" ] ]
-        [ New_todo.render ~dispatch; main_section t.rl ])
+        [ New_todo.render ~dispatch; main_section t.rl dispatch ])
   in
   let appElem = Dom_html.getElementById "app" in
   [ To_dom.of_section todo_app; To_dom.of_footer info_footer ]
