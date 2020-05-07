@@ -1,11 +1,10 @@
-open Js_of_ocaml_tyxml.Tyxml_js.Html
-open Js_of_ocaml
+open Std
+open Html
 
 let selected_attr frag =
   let frag' = Url.Current.get_fragment () in
   let frag' = if String.equal frag' "" then "/" else frag' in
   let frag' = String.trim frag' in
-  (* Firebug.console##log (Js.string frag'); *)
   if String.equal frag' frag then a_class [ "selected" ] else a_class []
 
 let render todos =
