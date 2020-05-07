@@ -1,10 +1,12 @@
 open Std
 
-let main_section : Todo.t RList.t -> [> Html_types.section ] Html.elt =
- fun rl ->
+let main_section : Todo_db.t -> [> Html_types.section ] Html.elt =
+ fun db ->
   let open Html in
-  let todos = RList.value rl in
-  let todo_ul = R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map Todo.render rl in
+  let todos = Todo_db.todos db in
+  let todo_ul =
+    R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map Todo.render (Todo_db.rl db)
+  in
   let toggle_all_chkbox =
     input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
   in
@@ -34,10 +36,9 @@ let main _ =
     [ true, "Buy a unicorn"; false, "Eat haagen daz ice-cream, yummy!" ]
     |> List.map (fun (completed, todo) -> Todo.create ~completed todo)
   in
-  let rl, rhandle = RList.create todos in
+  let db = Todo_db.create todos in
   let todo_app =
-    Html.(
-      section ~a:[ a_class [ "todoapp" ] ] [ New_todo.render rhandle; main_section rl ])
+    Html.(section ~a:[ a_class [ "todoapp" ] ] [ New_todo.render db; main_section db ])
   in
   Dom.appendChild appElem (To_dom.of_section todo_app);
   Dom.appendChild appElem (To_dom.of_footer info_footer);

@@ -1,3 +1,3 @@
 open Std
 
-val render : Todo.t RList.handle -> [> Html_types.header ] Html.elt
+val render : Todo_db.t -> [> Html_types.header ] Html.elt

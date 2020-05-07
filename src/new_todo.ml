@@ -2,7 +2,7 @@ open Std
 open Dom_html
 open Html
 
-let render todo_rlist =
+let render db =
   let open Opt.O in
   let handle_key_down evt =
     if evt##.keyCode = 13 (* ENTER key pressed. *)
@@ -13,7 +13,7 @@ let render todo_rlist =
        todo, fun () -> input##.value := Js.string "")
       |> fun o ->
       Opt.iter o (fun (todo, reset) ->
-          RList.snoc todo todo_rlist;
+          Todo_db.add db todo;
           reset ())
     else ();
     true
