@@ -24,8 +24,14 @@ let handle_dblclick t todo_input _ =
 
 let todo_input t =
   let open Opt.O in
-  let handle_onblur _ =
+  let reset_input input_elem =
+    input_elem
+    >>= CoerceTo.input
+    |> fun o -> Opt.iter o (fun input -> input##.value := Js.string t.todo)
+  in
+  let handle_onblur evt =
     t.set_editing false;
+    reset_input evt##.target;
     true
   in
   let handle_key_down evt =
@@ -34,9 +40,7 @@ let todo_input t =
     else if evt##.keyCode = 27 (* ESC *)
     then (
       t.set_editing false;
-      evt##.target
-      >>= CoerceTo.input
-      |> fun o -> Opt.iter o (fun input -> input##.value := Js.string t.todo))
+      reset_input evt##.target)
     else ();
     true
   in
