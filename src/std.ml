@@ -18,7 +18,7 @@ module Option = struct
     let ( let* ) = bind
     let ( let+ ) = map
     let ( >>= ) = ( let* )
-    let ( >>| ) = ( let* )
+    let ( >>| ) = ( let+ )
   end
 end
 
