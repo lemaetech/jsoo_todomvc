@@ -1,3 +1,3 @@
 open Std
 
-val render : Todo_db.t -> [> Html_types.header ] Html.elt
+val render : dispatch:(Action.t option -> unit) -> [> Html_types.header ] Html.elt
