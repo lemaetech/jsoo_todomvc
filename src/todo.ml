@@ -37,15 +37,15 @@ let todo_input t dispatch =
   in
   let handle_key_down evt =
     if evt##.keyCode = 13 (* ENTER *)
-    then (
-      t.set_editing false;
-      evt##.target
-      >>= CoerceTo.input
+    then
+      (t.set_editing false;
+       let* target = evt##.target in
+       let+ input = CoerceTo.input target in
+       Js.to_string input##.value)
       |> fun o ->
-      Opt.iter o (fun input ->
-          let description = input##.value |> Js.to_string in
+      Opt.iter o (fun description ->
           let t = { t with description } in
-          dispatch @@ Some (`Update t)))
+          dispatch @@ Some (`Update t))
     else if evt##.keyCode = 27 (* ESC *)
     then (
       t.set_editing false;
