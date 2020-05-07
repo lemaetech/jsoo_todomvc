@@ -16,7 +16,6 @@ let create ?(completed = false) description =
 
 let completed t = t.completed
 let id t = t.id
-let update_description t description = { t with description }
 
 let handle_dblclick t todo_input _ =
   t.set_editing true;
@@ -45,7 +44,7 @@ let todo_input t dispatch =
       |> fun o ->
       Opt.iter o (fun input ->
           let description = input##.value |> Js.to_string in
-          let t = update_description t description in
+          let t = { t with description } in
           dispatch @@ Some (`Update t)))
     else if evt##.keyCode = 27 (* ESC *)
     then (
