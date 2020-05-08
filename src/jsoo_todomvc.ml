@@ -35,9 +35,7 @@ let update_state t action =
   | `Destroy todo ->
     Todo.id todo
     |> Indextbl.find_opt t.index_tbl
-    |> Option.iter (fun index ->
-           Log.console##log index;
-           RList.remove index t.rh);
+    |> Option.iter (fun index -> RList.remove index t.rh);
     refresh_index t
 
 let main_section rl dispatch =
