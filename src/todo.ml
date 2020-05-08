@@ -44,8 +44,7 @@ let todo_input t dispatch =
        Js.to_string input##.value)
       |> fun o ->
       Opt.iter o (fun description ->
-          let t = { t with description } in
-          dispatch @@ Some (`Update t))
+          `Update { t with description } |> (Option.some >> dispatch))
     else if evt##.keyCode = 27 (* ESC *)
     then (
       t.set_editing false;
@@ -80,11 +79,11 @@ let render t ~dispatch =
       dispatch @@ Some (`Update t);
       true
     in
-    let attrs =
-      [ a_class [ "toggle" ]; a_input_type `Checkbox; a_onclick handle_onclick ]
-      |> fun attrs -> if completed t then a_checked () :: attrs else attrs
-    in
-    input ~a:attrs ()
+    input
+      ~a:
+        ([ a_class [ "toggle" ]; a_input_type `Checkbox; a_onclick handle_onclick ]
+        |> fun attrs -> if completed t then a_checked () :: attrs else attrs)
+      ()
   in
   let todo_input = todo_input t dispatch in
   let handle_destroy (_ : #Dom_html.event Js.t) =
