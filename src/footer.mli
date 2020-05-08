@@ -1,3 +1,3 @@
-open Js_of_ocaml_tyxml.Tyxml_js
+open Std
 
 val render : Todo.t list -> [> Html_types.footer ] Html.elt
