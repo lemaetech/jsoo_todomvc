@@ -17,8 +17,7 @@ dev-install :
 	opam install . --locked --deps-only --working-dir --with-test
 
 dev-switch : 
-	opam switch create . ocaml-base-compiler.4.10.0 --deps-only 
-	\ --with-test --locked --working-dir
+	opam switch create . ocaml-base-compiler.4.10.0 --deps-only --with-test --locked --working-dir
 
 open :
 	xdg-open _build/default/src/index.html
