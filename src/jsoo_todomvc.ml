@@ -19,9 +19,15 @@ let create todos =
   List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos;
   { rl; rh; index_tbl }
 
+let refresh_index t =
+  let todos = RList.value t.rl in
+  List.iteri (fun i todo -> Indextbl.replace t.index_tbl (Todo.id todo) i) todos
+
 let update_state t action =
   match action with
-  | `Add todo -> RList.snoc todo t.rh
+  | `Add todo ->
+    RList.snoc todo t.rh;
+    refresh_index t
   | `Update todo ->
     Todo.id todo
     |> Indextbl.find_opt t.index_tbl
@@ -31,7 +37,8 @@ let update_state t action =
     |> Indextbl.find_opt t.index_tbl
     |> Option.iter (fun index ->
            Log.console##log index;
-           RList.remove index t.rh)
+           RList.remove index t.rh);
+    refresh_index t
 
 let main_section rl dispatch =
   let open Html in
