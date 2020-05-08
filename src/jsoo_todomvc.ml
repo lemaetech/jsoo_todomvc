@@ -15,9 +15,6 @@ type t =
   ; index_tbl : int Indextbl.t
   }
 
-let total_remaining_todos todos =
-  todos |> List.filter (fun todo -> not @@ Todo.completed todo) |> List.length
-
 let update_index rl index_tbl =
   let todos = RList.value rl in
   List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos
@@ -26,7 +23,7 @@ let create todos =
   let calculate_totals rl =
     let todos = RList.value rl in
     let total = List.length todos in
-    let remaining = total_remaining_todos todos in
+    let remaining = todos |> List.filter (Todo.completed >> not) |> List.length in
     let completed = total - remaining in
     { total; completed; remaining }
   in

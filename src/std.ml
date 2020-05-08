@@ -34,3 +34,5 @@ type totals =
   ; completed : int
   ; remaining : int
   }
+
+let[@inline] ( >> ) f g x = g (f x)
