@@ -1,9 +1,9 @@
 opam-version: "2.0"
-name: "jsoo_todomvc"
 version: "1.0.0"
 synopsis: "TODO MVC app in js_of_ocaml"
 description: "Uses js_of_ocaml provided libraries only."
-authors: "Bikal Lem"
+maintainer: ["Bikal Lem"]
+authors: ["Bikal Lem"]
 license: "MPL-2.0"
 homepage: "https://github.com/bikallem/jsoo_todomvc"
 bug-reports: "https://github.com/bikallem/jsoo_todomvc/issues"
@@ -25,14 +25,14 @@ depends: [
   "easy-format" {= "1.3.2"}
   "fix" {= "20200131"}
   "fpath" {= "0.7.2"}
-  "gen_js_api" {= "1.0.6"}
+  "gen_js_api" {= "dev"}
   "js_of_ocaml" {= "3.6.0"}
   "js_of_ocaml-compiler" {= "3.6.0"}
   "js_of_ocaml-lwt" {= "3.6.0"}
   "js_of_ocaml-ppx" {= "3.6.0"}
   "js_of_ocaml-ppx_deriving_json" {= "3.6.0"}
   "js_of_ocaml-tyxml" {= "3.6.0"}
-  "lambda-term" {= "3.0.0"}
+  "lambda-term" {= "3.0.1"}
   "lwt" {= "5.3.0"}
   "lwt_log" {= "1.1.1"}
   "lwt_react" {= "1.1.3"}
@@ -45,14 +45,14 @@ depends: [
   "mmap" {= "1.1.0"}
   "ocaml" {= "4.10.0"}
   "ocaml-compiler-libs" {= "v0.12.1"}
-  "ocaml-migrate-parsetree" {= "1.7.2"}
+  "ocaml-migrate-parsetree" {= "1.7.3"}
   "ocamlbuild" {= "0.14.0"}
   "ocamlfind" {= "1.8.1"}
   "ocamlformat" {= "0.14.1"}
   "ocplib-endian" {= "1.1"}
   "odoc" {= "1.5.0"}
   "ppx_derivers" {= "1.2.1"}
-  "ppx_tools_versioned" {= "5.3.0"}
+  "ppx_tools_versioned" {= "5.4.0"}
   "ppxlib" {= "0.13.0"}
   "re" {= "1.9.0"}
   "react" {= "1.2.1"}
@@ -67,6 +67,7 @@ depends: [
   "uchar" {= "0.0.2"}
   "utop" {= "2.5.0"}
   "uucp" {= "13.0.0"}
+  "uuidm" {= "0.9.7"}
   "uuseg" {= "13.0.0"}
   "uutf" {= "1.0.2"}
   "yojson" {= "1.7.0"}
@@ -87,7 +88,7 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/bikallem/jsoo_todomvc.git"
-maintainer: "Bikal Lem"
 pin-depends: [
-  "gen_js_api.1.0.6" "git+https://github.com/LexiFi/gen_js_api.git"
+ ["gen_js_api.dev" "git+https://github.com/LexiFi/gen_js_api.git"]
 ]
+name: "jsoo_todomvc"
