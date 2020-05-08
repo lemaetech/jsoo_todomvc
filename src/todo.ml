@@ -79,13 +79,17 @@ let render t ~dispatch =
     |> fun attrs -> if completed t then a_checked () :: attrs else attrs
   in
   let todo_input = todo_input t dispatch in
+  let handle_destroy (_ : #Dom_html.event Js.t) =
+    dispatch @@ Some (`Destroy t);
+    true
+  in
   li
     ~a:[ li_cls_attr ]
     [ div
         ~a:[ a_class [ "view" ] ]
         [ input ~a:input_attrs ()
         ; label ~a:[ a_ondblclick @@ handle_dblclick t todo_input ] [ txt t.description ]
-        ; button ~a:[ a_class [ "destroy" ] ] []
+        ; button ~a:[ a_class [ "destroy" ]; a_onclick handle_destroy ] []
         ]
     ; todo_input
     ]
