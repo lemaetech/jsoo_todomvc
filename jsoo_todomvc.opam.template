@@ -1,3 +1,0 @@
-pin-depends: [
- ["gen_js_api.dev" "git+https://github.com/LexiFi/gen_js_api.git"]
-]

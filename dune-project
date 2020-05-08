@@ -29,11 +29,21 @@
   (uuidm
    (>= 0.9.7))
   (merlin
-   (>= 3.3.4))
+   (and
+    :dev
+    (>= 3.3.4)))
   (ocamlformat
-   (>= 0.14.1))
+   (and
+    :dev
+    (>= 0.14.1)))
   (utop
-   (>= 2.5.0))
+   (and
+    :dev
+    (>= 2.5.0)))
+  (opam-lock
+   (and
+    :dev
+    (>= 0.2)))
   (js_of_ocaml
    (>= 3.6.0))
   (js_of_ocaml-ppx
@@ -43,5 +53,4 @@
   (js_of_ocaml-ppx_deriving_json
    (>= 3.6.0))
   (js_of_ocaml-tyxml
-   (>= 3.6.0))
-  gen_js_api))
+   (>= 3.6.0))))
