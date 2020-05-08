@@ -8,19 +8,18 @@ let selected_attr frag =
   if String.equal frag' frag then a_class [ "selected" ] else a_class []
 
 let render total_completed_s =
+  let items_left_txt =
+    React.S.map
+      (fun total ->
+        Printf.sprintf
+          "%i %s left"
+          total
+          (if total <= 1 then "item" else if total > 1 then "items" else ""))
+      total_completed_s
+  in
   footer
     ~a:[ a_class [ "footer" ] ]
-    [ span
-        ~a:[ a_class [ "todo-count" ] ]
-        [ R.Html.txt
-          @@ React.S.map
-               (fun total ->
-                 Printf.sprintf
-                   "%i %s left"
-                   total
-                   (if total <= 1 then "item" else if total > 1 then "items" else ""))
-               total_completed_s
-        ]
+    [ span ~a:[ a_class [ "todo-count" ] ] [ R.Html.txt items_left_txt ]
     ; ul
         ~a:[ a_class [ "filters" ] ]
         [ li [ a ~a:[ a_href "#/"; selected_attr "/" ] [ txt "All" ] ]
