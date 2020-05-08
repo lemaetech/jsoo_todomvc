@@ -26,6 +26,8 @@
    (and
     :build
     (>= 2.5)))
+  (uuidm
+   (>= 0.9.7))
   (merlin
    (>= 3.3.4))
   (ocamlformat
