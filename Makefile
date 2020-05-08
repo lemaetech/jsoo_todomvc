@@ -14,11 +14,11 @@ lock :
 	opam lock .
 
 dev-install :
-	opam install . --locked --deps-only --working-dir 
+	opam install . --locked --deps-only --working-dir --with-test
 
 dev-switch : 
-	opam switch create -y . --deps-only --with-test --locked
-	opam install -y . --locked --deps-only
+	opam switch create . ocaml-base-compiler.4.10.0 --deps-only 
+	\ --with-test --locked --working-dir
 
 open :
 	xdg-open _build/default/src/index.html
