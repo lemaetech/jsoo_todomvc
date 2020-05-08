@@ -45,18 +45,23 @@ let update_index t =
   List.iteri (fun i todo -> Indextbl.replace t.index_tbl (Todo.id todo) i) todos
 
 let update_state t action =
+  let do_if_index_found todo f =
+    Todo.id todo |> Indextbl.find_opt t.index_tbl |> Option.iter f
+  in
   match action with
   | `Add todo ->
     RList.snoc todo t.rh;
     update_index t
-  | `Update todo ->
-    Todo.id todo
-    |> Indextbl.find_opt t.index_tbl
-    |> Option.iter (fun index -> RList.update todo index t.rh)
+  | `Update todo -> do_if_index_found todo (fun index -> RList.update todo index t.rh)
   | `Destroy todo ->
-    Todo.id todo
-    |> Indextbl.find_opt t.index_tbl
-    |> Option.iter (fun index -> RList.remove index t.rh);
+    do_if_index_found todo (fun index -> RList.remove index t.rh);
+    update_index t
+  | `Clear_completed ->
+    Log.console##log (Js.string "Clear_completed");
+    RList.value t.rl
+    |> List.filter Todo.completed
+    |> List.iter (fun todo ->
+           do_if_index_found todo (fun index -> RList.remove index t.rh));
     update_index t
 
 let main_section t dispatch =
@@ -76,7 +81,7 @@ let main_section t dispatch =
           (a_style "display:none")
           (React.S.map (fun { total; _ } -> total = 0) t.total_s)
       ]
-    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render t.total_s ]
+    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render t.total_s ~dispatch ]
 
 let info_footer =
   footer

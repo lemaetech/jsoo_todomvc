@@ -7,7 +7,7 @@ let selected_attr frag =
   let frag' = String.trim frag' in
   if String.equal frag' frag then a_class [ "selected" ] else a_class []
 
-let render totals =
+let render totals ~dispatch =
   let items_left_txt =
     React.S.map
       (fun { remaining; _ } ->
@@ -36,6 +36,9 @@ let render totals =
           ; R.filter_attrib
               (a_style "display:none")
               (React.S.map (fun { completed; _ } -> completed <= 0) totals)
+          ; a_onclick (fun _ ->
+                dispatch @@ Some `Clear_completed;
+                true)
           ]
         [ txt "Clear completed" ]
     ]
