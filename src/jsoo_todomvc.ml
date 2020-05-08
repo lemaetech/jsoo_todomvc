@@ -18,6 +18,10 @@ type t =
 let total_remaining_todos todos =
   todos |> List.filter (fun todo -> not @@ Todo.completed todo) |> List.length
 
+let update_index rl index_tbl =
+  let todos = RList.value rl in
+  List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos
+
 let create todos =
   let calculate_totals rl =
     let todos = RList.value rl in
@@ -28,16 +32,12 @@ let create todos =
   in
   let rl, rh = RList.create todos in
   let index_tbl = Indextbl.create (List.length todos) in
-  List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos;
+  update_index rl index_tbl;
   let total_s, set_total = React.S.create @@ calculate_totals rl in
   let (_ : unit React.event) =
     RList.event rl |> React.E.map (fun _ -> set_total @@ calculate_totals rl)
   in
   { rl; rh; index_tbl; total_s }
-
-let update_index t =
-  let todos = RList.value t.rl in
-  List.iteri (fun i todo -> Indextbl.replace t.index_tbl (Todo.id todo) i) todos
 
 let update_state t action =
   let do_if_index_found todo f =
@@ -46,18 +46,18 @@ let update_state t action =
   match action with
   | `Add todo ->
     RList.snoc todo t.rh;
-    update_index t
+    update_index t.rl t.index_tbl
   | `Update todo -> do_if_index_found todo (fun index -> RList.update todo index t.rh)
   | `Destroy todo ->
     do_if_index_found todo (fun index -> RList.remove index t.rh);
-    update_index t
+    update_index t.rl t.index_tbl
   | `Clear_completed ->
     Log.console##log (Js.string "Clear_completed");
     let todos =
       RList.value t.rl |> List.filter (fun todo -> not @@ Todo.completed todo)
     in
     RList.set t.rh todos;
-    update_index t
+    update_index t.rl t.index_tbl
 
 let main_section t dispatch =
   let todo_ul =
