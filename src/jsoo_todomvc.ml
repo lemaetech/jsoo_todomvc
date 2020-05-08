@@ -1,4 +1,5 @@
 open Std
+open Html
 
 module Indextbl = Hashtbl.Make (struct
   type t = Uuidm.t
@@ -10,16 +11,27 @@ end)
 type t =
   { rl : Todo.t RList.t
   ; rh : Todo.t RList.handle
+  ; total_completed_s : int React.S.t
   ; index_tbl : int Indextbl.t
   }
+
+let total_completed todos =
+  todos |> List.filter (fun todo -> not @@ Todo.completed todo) |> List.length
 
 let create todos =
   let rl, rh = RList.create todos in
   let index_tbl = Indextbl.create (List.length todos) in
   List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos;
-  { rl; rh; index_tbl }
+  let total_completed_s, set_total_completed = React.S.create (total_completed todos) in
+  let (_e : unit React.event) =
+    RList.event rl
+    |> React.E.map (fun _ ->
+           let total_completed = RList.value rl |> total_completed in
+           set_total_completed total_completed)
+  in
+  { rl; rh; index_tbl; total_completed_s }
 
-let refresh_index t =
+let update_index t =
   let todos = RList.value t.rl in
   List.iteri (fun i todo -> Indextbl.replace t.index_tbl (Todo.id todo) i) todos
 
@@ -27,7 +39,7 @@ let update_state t action =
   match action with
   | `Add todo ->
     RList.snoc todo t.rh;
-    refresh_index t
+    update_index t
   | `Update todo ->
     Todo.id todo
     |> Indextbl.find_opt t.index_tbl
@@ -36,13 +48,12 @@ let update_state t action =
     Todo.id todo
     |> Indextbl.find_opt t.index_tbl
     |> Option.iter (fun index -> RList.remove index t.rh);
-    refresh_index t
+    update_index t
 
-let main_section rl dispatch =
-  let open Html in
-  let todos = RList.value rl in
+let main_section t dispatch =
+  let todos = RList.value t.rl in
   let todo_ul =
-    R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map (Todo.render ~dispatch) rl
+    R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map (Todo.render ~dispatch) t.rl
   in
   let toggle_all_chkbox =
     input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
@@ -53,29 +64,28 @@ let main_section rl dispatch =
   let visibility = if List.length todos > 0 then "" else "display:none" in
   section
     ~a:[ a_class [ "main" ]; a_style visibility ]
-    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render todos ]
+    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render t.total_completed_s ]
 
 let info_footer =
-  Html.(
-    footer
-      ~a:[ a_class [ "info" ] ]
-      [ p [ txt "Double click to edit a todo" ]
-      ; p
-          [ txt "Written by "
-          ; a ~a:[ a_href "http://github.com/bikallem/" ] [ txt "Bikal Lem" ]
-          ]
-      ; p [ txt "Part of "; a ~a:[ a_href "http://todomvc.com" ] [ txt "TodoMVC" ] ]
-      ])
+  footer
+    ~a:[ a_class [ "info" ] ]
+    [ p [ txt "Double click to edit a todo" ]
+    ; p
+        [ txt "Written by "
+        ; a ~a:[ a_href "http://github.com/bikallem/" ] [ txt "Bikal Lem" ]
+        ]
+    ; p [ txt "Part of "; a ~a:[ a_href "http://todomvc.com" ] [ txt "TodoMVC" ] ]
+    ]
 
 let main todos (_ : #Dom_html.event Js.t) =
   let t = create todos in
   let action_s, dispatch = React.S.create None in
-  let _ = React.S.map (Option.map @@ update_state t) action_s in
+  let (_ : unit option React.S.t) = React.S.map (Option.map @@ update_state t) action_s in
   let todo_app =
     Html.(
       section
         ~a:[ a_class [ "todoapp" ] ]
-        [ New_todo.render ~dispatch; main_section t.rl dispatch ])
+        [ New_todo.render ~dispatch; main_section t dispatch ])
   in
   let appElem = Dom_html.getElementById "app" in
   [ To_dom.of_section todo_app; To_dom.of_footer info_footer ]
