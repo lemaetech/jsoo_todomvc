@@ -58,10 +58,10 @@ let update_state t action =
     update_index t
   | `Clear_completed ->
     Log.console##log (Js.string "Clear_completed");
-    RList.value t.rl
-    |> List.filter Todo.completed
-    |> List.iter (fun todo ->
-           do_if_index_found todo (fun index -> RList.remove index t.rh));
+    let todos =
+      RList.value t.rl |> List.filter (fun todo -> not @@ Todo.completed todo)
+    in
+    RList.set t.rh todos;
     update_index t
 
 let main_section t dispatch =
