@@ -1,3 +1,3 @@
 open Std
 
-val render : int React.S.t -> [> Html_types.footer ] Html.elt
+val render : totals React.S.t -> [> Html_types.footer ] Html.elt

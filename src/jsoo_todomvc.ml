@@ -11,31 +11,34 @@ end)
 type t =
   { rl : Todo.t RList.t
   ; rh : Todo.t RList.handle
-  ; total_completed_s : int React.S.t (* Monitors total todos completed. *)
-  ; total_s : int React.S.t (* Monitors total todos. *)
+  ; total_s : totals React.S.t (* Monitors total todos. *)
   ; index_tbl : int Indextbl.t
   }
 
-let total_completed todos =
+let total_remaining_todos todos =
   todos |> List.filter (fun todo -> not @@ Todo.completed todo) |> List.length
 
 let create todos =
   let rl, rh = RList.create todos in
-  let total_todos = List.length todos in
   let index_tbl = Indextbl.create (List.length todos) in
   List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos;
-  let total_completed_s, set_total_completed = React.S.create (total_completed todos) in
+  let total_s, set_total =
+    let total = List.length todos in
+    let remaining = total_remaining_todos todos in
+    let completed = total - remaining in
+    React.S.create { total; completed; remaining }
+  in
   (* Update total completed value whenever todos change. *)
   let (_ : unit React.event) =
     RList.event rl
-    |> React.E.map (fun _ -> RList.value rl |> total_completed |> set_total_completed)
+    |> React.E.map (fun _ ->
+           let todos = RList.value rl in
+           let total = List.length todos in
+           let remaining = total_remaining_todos todos in
+           let completed = total - remaining in
+           set_total { total; completed; remaining })
   in
-  let total_s, set_total = React.S.create total_todos in
-  (* Update total todos whenever todos change. *)
-  let (_ : unit React.event) =
-    RList.event rl |> React.E.map (fun _ -> RList.value rl |> List.length |> set_total)
-  in
-  { rl; rh; index_tbl; total_completed_s; total_s }
+  { rl; rh; index_tbl; total_s }
 
 let update_index t =
   let todos = RList.value t.rl in
@@ -69,9 +72,11 @@ let main_section t dispatch =
   section
     ~a:
       [ a_class [ "main" ]
-      ; R.filter_attrib (a_style "display:none") (React.S.map (( = ) 0) t.total_s)
+      ; R.filter_attrib
+          (a_style "display:none")
+          (React.S.map (fun { total; _ } -> total = 0) t.total_s)
       ]
-    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render t.total_completed_s ]
+    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render t.total_s ]
 
 let info_footer =
   footer
@@ -89,10 +94,9 @@ let main todos (_ : #Dom_html.event Js.t) =
   let action_s, dispatch = React.S.create None in
   let (_ : unit option React.S.t) = React.S.map (Option.map @@ update_state t) action_s in
   let todo_app =
-    Html.(
-      section
-        ~a:[ a_class [ "todoapp" ] ]
-        [ New_todo.render ~dispatch; main_section t dispatch ])
+    section
+      ~a:[ a_class [ "todoapp" ] ]
+      [ New_todo.render ~dispatch; main_section t dispatch ]
   in
   let appElem = Dom_html.getElementById "app" in
   [ To_dom.of_section todo_app; To_dom.of_footer info_footer ]

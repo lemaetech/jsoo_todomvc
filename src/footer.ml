@@ -7,15 +7,15 @@ let selected_attr frag =
   let frag' = String.trim frag' in
   if String.equal frag' frag then a_class [ "selected" ] else a_class []
 
-let render total_completed_s =
+let render totals =
   let items_left_txt =
     React.S.map
-      (fun total ->
+      (fun { remaining; _ } ->
         Printf.sprintf
           "%i %s left"
-          total
-          (if total <= 1 then "item" else if total > 1 then "items" else ""))
-      total_completed_s
+          remaining
+          (if remaining <= 1 then "item" else if remaining > 1 then "items" else ""))
+      totals
   in
   footer
     ~a:[ a_class [ "footer" ] ]
@@ -31,6 +31,11 @@ let render total_completed_s =
             ]
         ]
     ; button
-        ~a:[ a_class [ "clear-completed" ]; a_style "display:block" ]
+        ~a:
+          [ a_class [ "clear-completed" ]
+          ; R.filter_attrib
+              (a_style "display:none")
+              (React.S.map (fun { completed; _ } -> completed <= 0) totals)
+          ]
         [ txt "Clear completed" ]
     ]
