@@ -36,7 +36,7 @@ let todo_input t dispatch =
     true
   in
   let handle_key_down evt =
-    if evt##.keyCode = 13 (* ENTER *)
+    if evt##.keyCode = enter_keycode
     then
       (t.set_editing false;
        let* target = evt##.target in
@@ -45,7 +45,7 @@ let todo_input t dispatch =
       |> fun o ->
       Opt.iter o (fun description ->
           `Update { t with description } |> (Option.some >> dispatch))
-    else if evt##.keyCode = 27 (* ESC *)
+    else if evt##.keyCode = esc_keycode
     then (
       t.set_editing false;
       reset_input evt##.target)

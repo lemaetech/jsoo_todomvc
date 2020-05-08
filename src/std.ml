@@ -36,3 +36,5 @@ type totals =
   }
 
 let[@inline] ( >> ) f g x = g (f x)
+let enter_keycode = 13
+let esc_keycode = 27
