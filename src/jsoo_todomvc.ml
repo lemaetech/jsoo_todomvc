@@ -11,7 +11,7 @@ end)
 type t =
   { rl : Todo.t RList.t
   ; rh : Todo.t RList.handle
-  ; total_s : totals React.S.t (* Monitors total todos. *)
+  ; total_s : totals React.S.t (* Monitors todo list totals. *)
   ; index_tbl : int Indextbl.t
   }
 
