@@ -57,15 +57,6 @@ let update_state t action =
     update_index t.rl t.index_tbl
 
 let main_section t dispatch =
-  let todo_ul =
-    R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map (Todo.render ~dispatch) t.rl
-  in
-  let toggle_all_chkbox =
-    input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
-  in
-  let toggle_all_lbl =
-    label ~a:[ a_label_for "toggle-all" ] [ txt "Mark all as complete" ]
-  in
   section
     ~a:
       [ a_class [ "main" ]
@@ -73,7 +64,11 @@ let main_section t dispatch =
           (a_style "display:none")
           (React.S.map (fun { total; _ } -> total = 0) t.total_s)
       ]
-    [ toggle_all_chkbox; toggle_all_lbl; todo_ul; Footer.render t.total_s ~dispatch ]
+    [ input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
+    ; label ~a:[ a_label_for "toggle-all" ] [ txt "Mark all as complete" ]
+    ; R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map (Todo.render ~dispatch) t.rl
+    ; Footer.render t.total_s ~dispatch
+    ]
 
 let info_footer =
   footer
