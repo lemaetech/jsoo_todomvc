@@ -74,9 +74,17 @@ let render t ~dispatch =
            | false -> cls_attr)
          t.editing_s
   in
-  let input_attrs =
-    [ a_class [ "toggle" ]; a_input_type `Checkbox ]
-    |> fun attrs -> if completed t then a_checked () :: attrs else attrs
+  let completed_toggler =
+    let handle_onclick (_ : #Dom_html.event Js.t) =
+      let t = { t with completed = not t.completed } in
+      dispatch @@ Some (`Update t);
+      true
+    in
+    let attrs =
+      [ a_class [ "toggle" ]; a_input_type `Checkbox; a_onclick handle_onclick ]
+      |> fun attrs -> if completed t then a_checked () :: attrs else attrs
+    in
+    input ~a:attrs ()
   in
   let todo_input = todo_input t dispatch in
   let handle_destroy (_ : #Dom_html.event Js.t) =
@@ -87,7 +95,7 @@ let render t ~dispatch =
     ~a:[ li_cls_attr ]
     [ div
         ~a:[ a_class [ "view" ] ]
-        [ input ~a:input_attrs ()
+        [ completed_toggler
         ; label ~a:[ a_ondblclick @@ handle_dblclick t todo_input ] [ txt t.description ]
         ; button ~a:[ a_class [ "destroy" ]; a_onclick handle_destroy ] []
         ]
