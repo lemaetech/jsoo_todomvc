@@ -49,11 +49,9 @@ let update_state t action =
     do_if_index_found todo (fun index -> RList.remove index t.rh);
     update_index t.rl t.index_tbl
   | `Clear_completed ->
-    Log.console##log (Js.string "Clear_completed");
-    let todos =
-      RList.value t.rl |> List.filter (fun todo -> not @@ Todo.completed todo)
-    in
-    RList.set t.rh todos;
+    RList.value t.rl
+    |> List.filter (fun todo -> not @@ Todo.completed todo)
+    |> RList.set t.rh;
     update_index t.rl t.index_tbl
 
 let main_section t dispatch =
