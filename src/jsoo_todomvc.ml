@@ -19,24 +19,19 @@ let total_remaining_todos todos =
   todos |> List.filter (fun todo -> not @@ Todo.completed todo) |> List.length
 
 let create todos =
-  let rl, rh = RList.create todos in
-  let index_tbl = Indextbl.create (List.length todos) in
-  List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos;
-  let total_s, set_total =
+  let calculate_totals rl =
+    let todos = RList.value rl in
     let total = List.length todos in
     let remaining = total_remaining_todos todos in
     let completed = total - remaining in
-    React.S.create { total; completed; remaining }
+    { total; completed; remaining }
   in
-  (* Update total completed value whenever todos change. *)
+  let rl, rh = RList.create todos in
+  let index_tbl = Indextbl.create (List.length todos) in
+  List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos;
+  let total_s, set_total = React.S.create @@ calculate_totals rl in
   let (_ : unit React.event) =
-    RList.event rl
-    |> React.E.map (fun _ ->
-           let todos = RList.value rl in
-           let total = List.length todos in
-           let remaining = total_remaining_todos todos in
-           let completed = total - remaining in
-           set_total { total; completed; remaining })
+    RList.event rl |> React.E.map (fun _ -> set_total @@ calculate_totals rl)
   in
   { rl; rh; index_tbl; total_s }
 
