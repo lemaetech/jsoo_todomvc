@@ -78,7 +78,7 @@ let render t ~dispatch ~filter_s =
            | false -> cls_attr)
          t.editing_s
   in
-  let completed_toggler =
+  let complet_toggler =
     let handle_onclick (_ : #Dom_html.event Js.t) =
       let t = { t with complete = not t.complete } in
       dispatch @@ Some (`Update t);
@@ -109,7 +109,7 @@ let render t ~dispatch ~filter_s =
       ]
     [ div
         ~a:[ a_class [ "view" ] ]
-        [ completed_toggler
+        [ complet_toggler
         ; label ~a:[ a_ondblclick @@ handle_dblclick t todo_input ] [ txt t.description ]
         ; button ~a:[ a_class [ "destroy" ]; a_onclick handle_destroy ] []
         ]
