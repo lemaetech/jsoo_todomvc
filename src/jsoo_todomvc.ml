@@ -86,7 +86,6 @@ let create todos =
   in
   let rl, rh = RList.create todos in
   let index_tbl = Indextbl.create (List.length todos) in
-  update_index rl index_tbl;
   let total_s, set_total = React.S.create @@ calculate_totals rl in
   let action_s, dispatch = React.S.create None in
   let filter_s, set_filter = React.S.create (current_filter ()) in
@@ -101,6 +100,7 @@ let create todos =
     ; change_filter = (fun filter -> set_filter filter)
     }
   in
+  update_index rl index_tbl;
   (*---------------------------------------
    * Attach reactive mappers/observers.
    * --------------------------------------*)
