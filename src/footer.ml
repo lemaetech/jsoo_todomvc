@@ -1,16 +1,49 @@
 open Std
 open Html
 
-let a_link lbl url filter filter_s =
+type t =
+  { filter_s : filter React.S.t (* Monitors filter setting. *)
+  ; change_filter : filter -> unit (* Change current filter_s. *)
+  }
+
+let filter_s t = t.filter_s
+
+let current_filter () =
+  let frag = Url.Current.get_fragment () in
+  let frag = if String.equal frag "" then "/" else frag in
+  String.split_on_char '/' frag
+  |> List.filter (String.equal "" >> not)
+  |> List.map String.lowercase_ascii
+  |> function
+  | "active" :: _ -> `Active
+  | "completed" :: _ -> `Completed
+  | [] | _ -> `All
+;;
+
+let configure_onfilterchange change_filter =
+  let handle_hashchange (_ : #Dom_html.hashChangeEvent Js.t) =
+    current_filter () |> change_filter;
+    Js._true
+  in
+  Dom_html.window##.onhashchange := Dom_html.handler @@ handle_hashchange
+;;
+
+let create () =
+  let filter_s, change_filter = React.S.create @@ current_filter () in
+  configure_onfilterchange change_filter;
+  { filter_s; change_filter }
+;;
+
+let a_link lbl url filter t =
   a
     ~a:
       [ a_href url
-      ; R.filter_attrib (a_class [ "selected" ]) (React.S.map (( = ) filter) filter_s)
+      ; R.filter_attrib (a_class [ "selected" ]) (React.S.map (( = ) filter) t.filter_s)
       ]
     [ txt lbl ]
 ;;
 
-let render totals ~dispatch ~filter_s =
+let render t totals ~dispatch =
   let items_left_txt =
     React.S.map
       (fun { remaining; _ } ->
@@ -25,9 +58,9 @@ let render totals ~dispatch ~filter_s =
     [ span ~a:[ a_class [ "todo-count" ] ] [ R.Html.txt items_left_txt ]
     ; ul
         ~a:[ a_class [ "filters" ] ]
-        [ li [ a_link "All" "#/" `All filter_s ]
-        ; li [ a_link "Active" "#/active" `Active filter_s ]
-        ; li [ a_link "Completed" "#/completed" `Completed filter_s ]
+        [ li [ a_link "All" "#/" `All t ]
+        ; li [ a_link "Active" "#/active" `Active t ]
+        ; li [ a_link "Completed" "#/completed" `Completed t ]
         ]
     ; button
         ~a:

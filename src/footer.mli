@@ -1,7 +1,12 @@
 open Std
 
+type t
+
+val create : unit -> t
+val filter_s : t -> filter React.S.t
+
 val render
-  :  totals React.S.t
+  :  t
+  -> totals React.S.t
   -> dispatch:([> `Clear_completed ] option -> unit)
-  -> filter_s:filter React.S.t
   -> [> Html_types.footer ] Html.elt
