@@ -138,7 +138,7 @@ let main todos (_ : #Dom_html.event Js.t) =
 let () =
   let todos =
     [ true, "Buy a unicorn"; false, "Eat haagen daz ice-cream, yummy!" ]
-    |> List.map (fun (complete, todo) -> Todo.create ~complete todo)
+    |> List.map (fun (complete, description) -> Todo.create ~complete description)
   in
   Dom_html.window##.onload := Dom_html.handler @@ main todos
 ;;
