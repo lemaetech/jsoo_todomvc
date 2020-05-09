@@ -7,7 +7,7 @@ type t =
   ; complete : bool
   ; id : Uuidm.t
   ; editing_s : bool React.signal
-  ; set_editing : ?step:React.step -> bool -> unit
+  ; set_editing : bool -> unit
   }
 
 let create ?(complete = false) description =

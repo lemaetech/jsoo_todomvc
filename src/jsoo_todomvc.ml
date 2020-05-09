@@ -88,7 +88,7 @@ let create todos =
   let index_tbl = Indextbl.create (List.length todos) in
   let total_s, set_total = React.S.create @@ calculate_totals rl in
   let action_s, dispatch = React.S.create None in
-  let filter_s, set_filter = React.S.create (current_filter ()) in
+  let filter_s, change_filter = React.S.create (current_filter ()) in
   let t =
     { rl
     ; rh
@@ -97,7 +97,7 @@ let create todos =
     ; markall_completed = false
     ; dispatch
     ; filter_s
-    ; change_filter = (fun filter -> set_filter filter)
+    ; change_filter
     }
   in
   update_index rl index_tbl;
