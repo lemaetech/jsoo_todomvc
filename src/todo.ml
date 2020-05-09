@@ -103,7 +103,6 @@ let render t ~dispatch ~filter_s =
         ; a_onclick handle_onclick
         ; R.filter_attrib (a_checked ()) (React.S.map Fun.id t.complete_s)
         ]
-      (* |> fun attrs -> if complete t then a_checked () :: attrs else attrs) *)
       ()
   in
   let todo_input = todo_input t dispatch in
