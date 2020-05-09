@@ -4,18 +4,19 @@ open Dom_html
 
 type t =
   { description : string
-  ; completed : bool
+  ; complete : bool
   ; id : Uuidm.t
   ; editing_s : bool React.signal
   ; set_editing : ?step:React.step -> bool -> unit
   }
 
-let create ?(completed = false) description =
+let create ?(complete = false) description =
   let editing_s, set_editing = React.S.create false in
-  { description; completed; id = Uuidm.create `V4; editing_s; set_editing }
+  { description; complete; id = Uuidm.create `V4; editing_s; set_editing }
 
-let completed t = t.completed
+let complete t = t.complete
 let id t = t.id
+let set_complete t ~complete = { t with complete }
 
 let handle_dblclick t todo_input _ =
   t.set_editing true;
@@ -65,7 +66,7 @@ let todo_input t dispatch =
 
 let render t ~dispatch =
   let li_cls_attr =
-    let cls_attr = if completed t then [ "completed" ] else [] in
+    let cls_attr = if complete t then [ "completed" ] else [] in
     R.Html.a_class
     @@ React.S.map
          (function
@@ -75,14 +76,14 @@ let render t ~dispatch =
   in
   let completed_toggler =
     let handle_onclick (_ : #Dom_html.event Js.t) =
-      let t = { t with completed = not t.completed } in
+      let t = { t with complete = not t.complete } in
       dispatch @@ Some (`Update t);
       true
     in
     input
       ~a:
         ([ a_class [ "toggle" ]; a_input_type `Checkbox; a_onclick handle_onclick ]
-        |> fun attrs -> if completed t then a_checked () :: attrs else attrs)
+        |> fun attrs -> if complete t then a_checked () :: attrs else attrs)
       ()
   in
   let todo_input = todo_input t dispatch in

@@ -13,6 +13,7 @@ type t =
   ; rh : Todo.t RList.handle
   ; total_s : totals React.S.t (* Monitors todo list totals. *)
   ; index_tbl : int Indextbl.t
+  ; mutable markall_completed : bool
   }
 
 let update_index rl index_tbl =
@@ -23,7 +24,7 @@ let create todos =
   let calculate_totals rl =
     let todos = RList.value rl in
     let total = List.length todos in
-    let remaining = todos |> List.filter (Todo.completed >> not) |> List.length in
+    let remaining = todos |> List.filter (Todo.complete >> not) |> List.length in
     let completed = total - remaining in
     { total; completed; remaining }
   in
@@ -34,7 +35,7 @@ let create todos =
   let (_ : unit React.event) =
     RList.event rl |> React.E.map (fun _ -> set_total @@ calculate_totals rl)
   in
-  { rl; rh; index_tbl; total_s }
+  { rl; rh; index_tbl; total_s; markall_completed = false }
 
 let update_state t action =
   let do_if_index_found todo f =
@@ -49,10 +50,21 @@ let update_state t action =
     do_if_index_found todo (fun index -> RList.remove index t.rh);
     update_index t.rl t.index_tbl
   | `Clear_completed ->
-    RList.value t.rl |> List.filter (Todo.completed >> not) |> RList.set t.rh;
+    RList.value t.rl |> List.filter (Todo.complete >> not) |> RList.set t.rh;
+    update_index t.rl t.index_tbl
+  | `Toggle_all toggle ->
+    Log.console##log (Js.bool toggle);
+    t.markall_completed <- toggle;
+    RList.value t.rl |> List.map (Todo.set_complete ~complete:toggle) |> RList.set t.rh;
     update_index t.rl t.index_tbl
 
 let main_section t dispatch =
+  let (_ : unit React.signal) =
+    React.S.map
+      (fun { total; completed; _ } ->
+        if total = completed then t.markall_completed <- true)
+      t.total_s
+  in
   section
     ~a:
       [ a_class [ "main" ]
@@ -60,7 +72,20 @@ let main_section t dispatch =
           (a_style "display:none")
           (React.S.map (fun { total; _ } -> total = 0) t.total_s)
       ]
-    [ input ~a:[ a_id "toggle-all"; a_class [ "toggle-all" ]; a_input_type `Checkbox ] ()
+    [ input
+        ~a:
+          [ a_id "toggle-all"
+          ; a_class [ "toggle-all" ]
+          ; a_input_type `Checkbox
+          ; R.filter_attrib
+              (a_checked ())
+              (React.S.map (fun { total; completed; _ } -> total = completed) t.total_s)
+          ; a_onclick (fun _ ->
+                Log.console##log (Js.string "onclick");
+                `Toggle_all (not t.markall_completed) |> (Option.some >> dispatch);
+                true)
+          ]
+        ()
     ; label ~a:[ a_label_for "toggle-all" ] [ txt "Mark all as complete" ]
     ; R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map (Todo.render ~dispatch) t.rl
     ; Footer.render t.total_s ~dispatch
@@ -94,6 +119,6 @@ let main todos (_ : #Dom_html.event Js.t) =
 let () =
   let todos =
     [ true, "Buy a unicorn"; false, "Eat haagen daz ice-cream, yummy!" ]
-    |> List.map (fun (completed, todo) -> Todo.create ~completed todo)
+    |> List.map (fun (complete, todo) -> Todo.create ~complete todo)
   in
   Dom_html.window##.onload := Dom_html.handler @@ main todos
