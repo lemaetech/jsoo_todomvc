@@ -122,18 +122,17 @@ let info_footer =
         ]
     ; p [ txt "Part of "; a ~a:[ a_href "http://todomvc.com" ] [ txt "TodoMVC" ] ]
     ]
+  |> To_dom.of_footer
 ;;
 
 let main todos (_ : #Dom_html.event Js.t) =
-  let t = create todos in
+  let ({ dispatch; _ } as t) = create todos in
   let todo_app =
-    section
-      ~a:[ a_class [ "todoapp" ] ]
-      [ New_todo.render ~dispatch:t.dispatch; main_section t ]
+    section ~a:[ a_class [ "todoapp" ] ] [ New_todo.render ~dispatch; main_section t ]
+    |> To_dom.of_section
   in
-  let appElem = Dom_html.getElementById "app" in
-  [ To_dom.of_section todo_app; To_dom.of_footer info_footer ]
-  |> List.iter (fun elem -> Dom.appendChild appElem elem);
+  [ todo_app; info_footer ]
+  |> List.iter (fun elem -> Dom.appendChild (Dom_html.getElementById "app") elem);
   Js.bool true
 ;;
 
