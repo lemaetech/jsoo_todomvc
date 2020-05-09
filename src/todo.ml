@@ -16,6 +16,7 @@ let create ?(complete = false) description =
 ;;
 
 let complete t = t.complete
+let active t = not t.complete
 let id t = t.id
 let set_complete t ~complete = { t with complete }
 
@@ -67,7 +68,7 @@ let todo_input t dispatch =
     ()
 ;;
 
-let render t ~dispatch =
+let render t ~dispatch ~filter_s =
   let li_cls_attr =
     let cls_attr = if complete t then [ "completed" ] else [] in
     R.Html.a_class
@@ -95,7 +96,17 @@ let render t ~dispatch =
     true
   in
   li
-    ~a:[ li_cls_attr ]
+    ~a:
+      [ li_cls_attr
+      ; R.filter_attrib
+          (a_style "display:none")
+          (React.S.map
+             (function
+               | `All -> false
+               | `Active -> not (active t)
+               | `Completed -> not (complete t))
+             filter_s)
+      ]
     [ div
         ~a:[ a_class [ "view" ] ]
         [ completed_toggler

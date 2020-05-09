@@ -1,6 +1,12 @@
 open Std
 open Html
 
+(*------------------------------------------------------------------
+ * Naming Conventions :- 
+ * _s   - denotes a signal type in React.S.t. Signals are dynamic and 
+ *        changes according to input. 
+ * _tbl - denotes a Hashtbl.t 
+ *-------------------------------------------------------------------*)
 module Indextbl = Hashtbl.Make (struct
   type t = Uuidm.t
 
@@ -9,11 +15,14 @@ module Indextbl = Hashtbl.Make (struct
 end)
 
 type t =
-  { rl : Todo.t RList.t
-  ; rh : Todo.t RList.handle
+  { rl : Todo.t RList.t (* Todo.t reactive list store. *)
+  ; rh : Todo.t RList.handle (* Todo.t reactive list handle to 'rl'. *)
   ; total_s : totals React.S.t (* Monitors todo list totals. *)
-  ; index_tbl : int Indextbl.t
+  ; filter_s : filter React.S.t (* Monitors filter setting. *)
+  ; change_filter : filter -> unit (* Change current filter_s. *)
+  ; index_tbl : int Indextbl.t (* Hashtbl to store 'rl' index of a Todo.t. *)
   ; dispatch :
+      (* Action dispatcher. *)
       [ `Add of Todo.t
       | `Update of Todo.t
       | `Destroy of Todo.t
@@ -22,7 +31,7 @@ type t =
       ]
       option
       -> unit
-  ; mutable markall_completed : bool
+  ; mutable markall_completed : bool (* Markall state. *)
   }
 
 let update_index rl index_tbl =
@@ -55,6 +64,18 @@ let update_state t action =
     action
 ;;
 
+let current_filter () =
+  let frag = Url.Current.get_fragment () in
+  let frag = if String.equal frag "" then "/" else frag in
+  String.split_on_char '/' frag
+  |> List.filter (String.equal "" >> not)
+  |> List.map String.lowercase_ascii
+  |> function
+  | "active" :: _ -> `Active
+  | "completed" :: _ -> `Completed
+  | [] | _ -> `All
+;;
+
 let create todos =
   let calculate_totals rl =
     let todos = RList.value rl in
@@ -68,7 +89,18 @@ let create todos =
   update_index rl index_tbl;
   let total_s, set_total = React.S.create @@ calculate_totals rl in
   let action_s, dispatch = React.S.create None in
-  let t = { rl; rh; index_tbl; total_s; markall_completed = false; dispatch } in
+  let filter_s, set_filter = React.S.create (current_filter ()) in
+  let t =
+    { rl
+    ; rh
+    ; index_tbl
+    ; total_s
+    ; markall_completed = false
+    ; dispatch
+    ; filter_s
+    ; change_filter = (fun filter -> set_filter filter)
+    }
+  in
   (*---------------------------------------
    * Attach reactive mappers/observers.
    * --------------------------------------*)
@@ -84,7 +116,7 @@ let create todos =
   t
 ;;
 
-let main_section ({ dispatch; _ } as t) =
+let main_section ({ dispatch; filter_s; _ } as t) =
   section
     ~a:
       [ a_class [ "main" ]
@@ -106,8 +138,9 @@ let main_section ({ dispatch; _ } as t) =
           ]
         ()
     ; label ~a:[ a_label_for "toggle-all" ] [ txt "Mark all as complete" ]
-    ; R.Html.ul ~a:[ a_class [ "todo-list" ] ] @@ RList.map (Todo.render ~dispatch) t.rl
-    ; Footer.render t.total_s ~dispatch
+    ; R.Html.ul ~a:[ a_class [ "todo-list" ] ]
+      @@ RList.map (Todo.render ~dispatch ~filter_s) t.rl
+    ; Footer.render t.total_s ~dispatch ~filter_s
     ]
 ;;
 
@@ -124,6 +157,15 @@ let info_footer =
   |> To_dom.of_footer
 ;;
 
+let configure_onfilterchange t =
+  let handle_hashchange (_ : #Dom_html.hashChangeEvent Js.t) =
+    let filter = current_filter () in
+    t.change_filter filter;
+    Js._true
+  in
+  Dom_html.window##.onhashchange := Dom_html.handler @@ handle_hashchange
+;;
+
 let main todos (_ : #Dom_html.event Js.t) =
   let ({ dispatch; _ } as t) = create todos in
   let todo_app =
@@ -132,6 +174,7 @@ let main todos (_ : #Dom_html.event Js.t) =
   in
   [ todo_app; info_footer ]
   |> List.iter (fun elem -> Dom.appendChild (Dom_html.getElementById "app") elem);
+  configure_onfilterchange t;
   Js.bool true
 ;;
 

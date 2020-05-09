@@ -1,14 +1,16 @@
 open Std
 open Html
 
-let selected_attr frag =
-  let frag' = Url.Current.get_fragment () in
-  let frag' = if String.equal frag' "" then "/" else frag' in
-  let frag' = String.trim frag' in
-  if String.equal frag' frag then a_class [ "selected" ] else a_class []
+let a_link lbl url filter filter_s =
+  a
+    ~a:
+      [ a_href url
+      ; R.filter_attrib (a_class [ "selected" ]) (React.S.map (( = ) filter) filter_s)
+      ]
+    [ txt lbl ]
 ;;
 
-let render totals ~dispatch =
+let render totals ~dispatch ~filter_s =
   let items_left_txt =
     React.S.map
       (fun { remaining; _ } ->
@@ -23,13 +25,9 @@ let render totals ~dispatch =
     [ span ~a:[ a_class [ "todo-count" ] ] [ R.Html.txt items_left_txt ]
     ; ul
         ~a:[ a_class [ "filters" ] ]
-        [ li [ a ~a:[ a_href "#/"; selected_attr "/" ] [ txt "All" ] ]
-        ; li [ a ~a:[ a_href "#/active"; selected_attr "/active" ] [ txt "Active" ] ]
-        ; li
-            [ a
-                ~a:[ a_href "#/completed"; selected_attr "/completed" ]
-                [ txt "Completed" ]
-            ]
+        [ li [ a_link "All" "#/" `All filter_s ]
+        ; li [ a_link "Active" "#/active" `Active filter_s ]
+        ; li [ a_link "Completed" "#/completed" `Completed filter_s ]
         ]
     ; button
         ~a:
