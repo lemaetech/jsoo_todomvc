@@ -41,25 +41,21 @@ let update_state t action =
   let do_if_index_found todo f =
     Todo.id todo |> Indextbl.find_opt t.index_tbl |> Option.iter f
   in
-  Option.iter
-    (function
-      | `Add todo ->
-        RList.snoc todo t.rh;
-        update_index t.rl t.index_tbl
-      | `Update todo -> do_if_index_found todo (fun index -> RList.update todo index t.rh)
-      | `Destroy todo ->
-        do_if_index_found todo (fun index -> RList.remove index t.rh);
-        update_index t.rl t.index_tbl
-      | `Clear_completed ->
-        RList.value t.rl |> List.filter (Todo.complete >> not) |> RList.set t.rh;
-        update_index t.rl t.index_tbl
-      | `Toggle_all toggle ->
-        t.markall_completed <- toggle;
-        RList.value t.rl
-        |> List.map (Todo.set_complete ~complete:toggle)
-        |> RList.set t.rh;
-        update_index t.rl t.index_tbl)
-    action
+  match action with
+  | `Add todo ->
+    RList.snoc todo t.rh;
+    update_index t.rl t.index_tbl
+  | `Update todo -> do_if_index_found todo (fun index -> RList.update todo index t.rh)
+  | `Destroy todo ->
+    do_if_index_found todo (fun index -> RList.remove index t.rh);
+    update_index t.rl t.index_tbl
+  | `Clear_completed ->
+    RList.value t.rl |> List.filter (Todo.complete >> not) |> RList.set t.rh;
+    update_index t.rl t.index_tbl
+  | `Toggle_all toggle ->
+    t.markall_completed <- toggle;
+    RList.value t.rl |> List.map (Todo.set_complete ~complete:toggle) |> RList.set t.rh;
+    update_index t.rl t.index_tbl
 ;;
 
 let create todos =
@@ -79,7 +75,7 @@ let create todos =
   (*---------------------------------------
    * Attach reactive mappers/observers.
    * --------------------------------------*)
-  let (_ : unit React.S.t) = React.S.map (update_state t) action_s in
+  let (_ : unit React.S.t) = React.S.map (Option.iter (update_state t)) action_s in
   let (_ : unit React.event) =
     RList.event rl |> React.E.map (fun _ -> set_total @@ calculate_totals rl)
   in
