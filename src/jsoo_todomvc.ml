@@ -1,12 +1,12 @@
 open Std
 open Html
 
-(*------------------------------------------------------------------
+(*----------------------------------------------------------------------
  * Naming Conventions :- 
- * _s   - denotes a signal type in React.S.t. Signals are dynamic and 
- *        changes according to input. 
- * _tbl - denotes a Hashtbl.t 
- *-------------------------------------------------------------------*)
+ * _s   - denotes a signal type React.S.t. Signals are dynamic and the
+ *        value it encodes change according to input. 
+ * _tbl - denotes a Hashtbl.t
+ *----------------------------------------------------------------------*)
 module Indextbl = Hashtbl.Make (struct
   type t = Uuidm.t
 
@@ -15,8 +15,8 @@ module Indextbl = Hashtbl.Make (struct
 end)
 
 type t =
-  { rl : Todo.t RList.t (* Todo.t reactive list store. *)
-  ; rh : Todo.t RList.handle (* Todo.t reactive list handle to 'rl'. *)
+  { rl : Todo.t RList.t (* Reactive Todo.t list store. *)
+  ; rh : Todo.t RList.handle (* Reactive Todo.t list handle to 'rl'. *)
   ; total_s : totals React.S.t (* Monitors todo list totals. *)
   ; filter_s : filter React.S.t (* Monitors filter setting. *)
   ; change_filter : filter -> unit (* Change current filter_s. *)
@@ -31,7 +31,7 @@ type t =
       ]
       option
       -> unit
-  ; mutable markall_completed : bool (* Markall state. *)
+  ; mutable markall_completed : bool (* Markall completed state. *)
   }
 
 let update_index rl index_tbl =
