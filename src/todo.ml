@@ -8,11 +8,21 @@ type t =
   ; id : Uuidm.t
   ; editing_s : bool React.signal
   ; set_editing : bool -> unit
+  ; complete_s : bool React.signal
+  ; set_complete : bool -> unit
   }
 
 let create ?(complete = false) description =
   let editing_s, set_editing = React.S.create false in
-  { description; complete; id = Uuidm.create `V4; editing_s; set_editing }
+  let complete_s, set_complete = React.S.create complete in
+  { description
+  ; complete
+  ; id = Uuidm.create `V4
+  ; editing_s
+  ; set_editing
+  ; complete_s
+  ; set_complete
+  }
 ;;
 
 let complete t = t.complete
@@ -69,6 +79,7 @@ let todo_input t dispatch =
 ;;
 
 let render t ~dispatch ~filter_s =
+  t.set_complete t.complete;
   let li_cls_attr =
     let cls_attr = if complete t then [ "completed" ] else [] in
     R.Html.a_class
@@ -80,14 +91,19 @@ let render t ~dispatch ~filter_s =
   in
   let complete_toggler =
     let handle_onclick (_ : #Dom_html.event Js.t) =
-      let t = { t with complete = not t.complete } in
-      dispatch @@ Some (`Update t);
+      let complete = not t.complete in
+      `Update { t with complete } |> (Option.some >> dispatch);
+      t.set_complete complete;
       true
     in
     input
       ~a:
-        ([ a_class [ "toggle" ]; a_input_type `Checkbox; a_onclick handle_onclick ]
-        |> fun attrs -> if complete t then a_checked () :: attrs else attrs)
+        [ a_class [ "toggle" ]
+        ; a_input_type `Checkbox
+        ; a_onclick handle_onclick
+        ; R.filter_attrib (a_checked ()) (React.S.map Fun.id t.complete_s)
+        ]
+      (* |> fun attrs -> if complete t then a_checked () :: attrs else attrs) *)
       ()
   in
   let todo_input = todo_input t dispatch in
