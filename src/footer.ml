@@ -34,7 +34,7 @@ let create () =
   { filter_s; change_filter }
 ;;
 
-let a_link lbl url filter t =
+let filter_link lbl url filter t =
   a
     ~a:
       [ a_href url
@@ -58,9 +58,9 @@ let render t totals ~dispatch =
     [ span ~a:[ a_class [ "todo-count" ] ] [ R.Html.txt items_left_txt ]
     ; ul
         ~a:[ a_class [ "filters" ] ]
-        [ li [ a_link "All" "#/" `All t ]
-        ; li [ a_link "Active" "#/active" `Active t ]
-        ; li [ a_link "Completed" "#/completed" `Completed t ]
+        [ li [ filter_link "All" "#/" `All t ]
+        ; li [ filter_link "Active" "#/active" `Active t ]
+        ; li [ filter_link "Completed" "#/completed" `Completed t ]
         ]
     ; button
         ~a:
