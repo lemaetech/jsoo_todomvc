@@ -159,8 +159,7 @@ let info_footer =
 
 let configure_onfilterchange t =
   let handle_hashchange (_ : #Dom_html.hashChangeEvent Js.t) =
-    let filter = current_filter () in
-    t.change_filter filter;
+    current_filter () |> t.change_filter;
     Js._true
   in
   Dom_html.window##.onhashchange := Dom_html.handler @@ handle_hashchange
