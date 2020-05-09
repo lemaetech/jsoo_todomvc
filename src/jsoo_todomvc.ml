@@ -84,8 +84,7 @@ let create todos =
   t
 ;;
 
-let main_section t =
-  let dispatch = t.dispatch in
+let main_section ({ dispatch; _ } as t) =
   section
     ~a:
       [ a_class [ "main" ]
