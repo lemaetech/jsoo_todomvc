@@ -53,7 +53,6 @@ let update_state t action =
     RList.value t.rl |> List.filter (Todo.complete >> not) |> RList.set t.rh;
     update_index t.rl t.index_tbl
   | `Toggle_all toggle ->
-    Log.console##log (Js.bool toggle);
     t.markall_completed <- toggle;
     RList.value t.rl |> List.map (Todo.set_complete ~complete:toggle) |> RList.set t.rh;
     update_index t.rl t.index_tbl
@@ -61,8 +60,7 @@ let update_state t action =
 let main_section t dispatch =
   let (_ : unit React.signal) =
     React.S.map
-      (fun { total; completed; _ } ->
-        if total = completed then t.markall_completed <- true)
+      (fun { total; completed; _ } -> t.markall_completed <- total = completed)
       t.total_s
   in
   section
@@ -81,7 +79,6 @@ let main_section t dispatch =
               (a_checked ())
               (React.S.map (fun { total; completed; _ } -> total = completed) t.total_s)
           ; a_onclick (fun _ ->
-                Log.console##log (Js.string "onclick");
                 `Toggle_all (not t.markall_completed) |> (Option.some >> dispatch);
                 true)
           ]
