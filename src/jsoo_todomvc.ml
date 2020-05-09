@@ -35,7 +35,13 @@ let create todos =
   let (_ : unit React.event) =
     RList.event rl |> React.E.map (fun _ -> set_total @@ calculate_totals rl)
   in
-  { rl; rh; index_tbl; total_s; markall_completed = false }
+  let t = { rl; rh; index_tbl; total_s; markall_completed = false } in
+  let (_ : unit React.signal) =
+    React.S.map
+      (fun { total; completed; _ } -> t.markall_completed <- total = completed)
+      t.total_s
+  in
+  t
 
 let update_state t action =
   let do_if_index_found todo f =
@@ -58,11 +64,6 @@ let update_state t action =
     update_index t.rl t.index_tbl
 
 let main_section t dispatch =
-  let (_ : unit React.signal) =
-    React.S.map
-      (fun { total; completed; _ } -> t.markall_completed <- total = completed)
-      t.total_s
-  in
   section
     ~a:
       [ a_class [ "main" ]
