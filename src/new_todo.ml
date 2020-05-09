@@ -16,6 +16,7 @@ let handle_key_down dispatch evt =
         reset ())
   else ();
   true
+;;
 
 let render ~dispatch =
   header
@@ -30,3 +31,4 @@ let render ~dispatch =
           ]
         ()
     ]
+;;

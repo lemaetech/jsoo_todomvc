@@ -6,6 +6,7 @@ let selected_attr frag =
   let frag' = if String.equal frag' "" then "/" else frag' in
   let frag' = String.trim frag' in
   if String.equal frag' frag then a_class [ "selected" ] else a_class []
+;;
 
 let render totals ~dispatch =
   let items_left_txt =
@@ -42,3 +43,4 @@ let render totals ~dispatch =
           ]
         [ txt "Clear completed" ]
     ]
+;;

@@ -13,6 +13,7 @@ type t =
 let create ?(complete = false) description =
   let editing_s, set_editing = React.S.create false in
   { description; complete; id = Uuidm.create `V4; editing_s; set_editing }
+;;
 
 let complete t = t.complete
 let id t = t.id
@@ -23,6 +24,7 @@ let handle_dblclick t todo_input _ =
   let dom_inp = To_dom.of_input todo_input in
   dom_inp##focus;
   true
+;;
 
 let todo_input t dispatch =
   let open Opt.O in
@@ -63,6 +65,7 @@ let todo_input t dispatch =
       ; a_onkeydown @@ handle_key_down
       ]
     ()
+;;
 
 let render t ~dispatch =
   let li_cls_attr =
@@ -101,3 +104,4 @@ let render t ~dispatch =
         ]
     ; todo_input
     ]
+;;
