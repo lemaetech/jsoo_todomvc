@@ -44,6 +44,10 @@
    (and
     :dev
     (>= 0.2)))
+  (ocplib-json-typed
+   (>= 0.7.1))
+  (ocplib-json-typed-browser
+   (>= 0.7.1))
   (js_of_ocaml
    (>= 3.6.0))
   (js_of_ocaml-ppx

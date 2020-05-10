@@ -35,6 +35,8 @@ depends: [
   "ocamlbuild" {= "0.14.0"}
   "ocamlfind" {= "1.8.1"}
   "ocplib-endian" {= "1.1"}
+  "ocplib-json-typed" {= "0.7.1"}
+  "ocplib-json-typed-browser" {= "0.7.1"}
   "ppx_derivers" {= "1.2.1"}
   "ppx_tools_versioned" {= "5.4.0"}
   "ppxlib" {= "0.13.0"}
@@ -45,9 +47,11 @@ depends: [
   "seq" {= "base"}
   "sexplib0" {= "v0.13.0"}
   "stdio" {= "v0.13.0"}
+  "stringext" {= "1.6.0"}
   "topkg" {= "1.0.1"}
   "tyxml" {= "4.4.0"}
   "uchar" {= "0.0.2"}
+  "uri" {= "3.1.0"}
   "uuidm" {= "0.9.7"}
   "uutf" {= "1.0.2"}
   "yojson" {= "1.7.0"}

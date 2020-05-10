@@ -13,7 +13,10 @@ c clean :
 lock : 
 	opam lock .
 
-dev-install :
+install: 
+	opam install . --deps-only --working-dir --with-test
+
+lock-install :
 	opam install . --locked --deps-only --working-dir --with-test
 
 dev-switch : 
@@ -22,4 +25,4 @@ dev-switch :
 open :
 	xdg-open _build/default/src/index.html
 
-.PHONY: b build p prod f fmt c clean lock dev-install dev-switch open 
+.PHONY: b build p prod f fmt c clean lock install lock-install dev-switch open 
