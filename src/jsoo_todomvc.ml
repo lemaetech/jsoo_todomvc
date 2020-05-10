@@ -91,7 +91,9 @@ let main_section ({dispatch; _} as t) =
           (React.S.map (fun {total; _} -> total = 0) t.total_s) ]
     [ input
         ~a:
-          [ a_id "toggle-all"; a_class ["toggle-all"]; a_input_type `Checkbox
+          [ a_id "toggle-all"
+          ; a_class ["toggle-all"]
+          ; a_input_type `Checkbox
           ; R.filter_attrib (a_checked ())
               (React.S.map
                  (fun {total; completed; _} -> total = completed)
@@ -100,11 +102,13 @@ let main_section ({dispatch; _} as t) =
                 `Toggle_all (not t.markall_completed)
                 |> (Option.some >> dispatch) ;
                 true) ]
-        (); label ~a:[a_label_for "toggle-all"] [txt "Mark all as complete"]
+        ()
+    ; label ~a:[a_label_for "toggle-all"] [txt "Mark all as complete"]
     ; R.Html.ul ~a:[a_class ["todo-list"]]
       @@ RList.map
            (Todo.render ~dispatch ~filter_s:(Footer.filter_s footer))
-           t.rl; Footer.render footer t.total_s ~dispatch ]
+           t.rl
+    ; Footer.render footer t.total_s ~dispatch ]
 
 let info_footer =
   footer

@@ -22,6 +22,8 @@ let render ~dispatch =
     [ h1 [txt "todos"]
     ; input
         ~a:
-          [ a_class ["new-todo"]; a_placeholder "What needs to be done?"
-          ; a_autofocus (); a_onkeydown @@ handle_key_down dispatch ]
+          [ a_class ["new-todo"]
+          ; a_placeholder "What needs to be done?"
+          ; a_autofocus ()
+          ; a_onkeydown @@ handle_key_down dispatch ]
         () ]

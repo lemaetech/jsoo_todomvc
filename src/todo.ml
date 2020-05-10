@@ -58,9 +58,12 @@ let todo_input t dispatch =
     true in
   input
     ~a:
-      [ a_id (Uuidm.to_string t.id); a_input_type `Text; a_class ["edit"]
-      ; a_value t.description; a_onblur @@ handle_onblur
-      ; a_onkeydown @@ handle_key_down ]
+      [ a_id (Uuidm.to_string t.id)
+      ; a_input_type `Text
+      ; a_class ["edit"]
+      ; a_value t.description
+      ; a_onblur handle_onblur
+      ; a_onkeydown handle_key_down ]
     ()
 
 let render t ~dispatch ~filter_s =
@@ -79,7 +82,9 @@ let render t ~dispatch ~filter_s =
       true in
     input
       ~a:
-        [ a_class ["toggle"]; a_input_type `Checkbox; a_onclick handle_onclick
+        [ a_class ["toggle"]
+        ; a_input_type `Checkbox
+        ; a_onclick handle_onclick
         ; R.filter_attrib (a_checked ()) (React.S.map Fun.id t.complete_s) ]
       () in
   let todo_input = todo_input t dispatch in
