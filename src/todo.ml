@@ -62,8 +62,8 @@ let todo_input t dispatch =
       ; a_input_type `Text
       ; a_class ["edit"]
       ; a_value t.description
-      ; a_onblur @@ handle_onblur
-      ; a_onkeydown @@ handle_key_down ]
+      ; a_onblur handle_onblur
+      ; a_onkeydown handle_key_down ]
     ()
 
 let render t ~dispatch ~filter_s =
