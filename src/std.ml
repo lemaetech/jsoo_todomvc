@@ -19,6 +19,17 @@ module Option = struct
   end
 end
 
+module Result = struct
+  include Stdlib.Result
+
+  module O = struct
+    let ( let* ) = bind
+    let ( let+ ) = map
+    let ( >>= ) = ( let* )
+    let ( >>| ) = ( let+ )
+  end
+end
+
 module RList = ReactiveData.RList
 module Html = Js_of_ocaml_tyxml.Tyxml_js.Html
 module Dom_html = Js_of_ocaml.Dom_html

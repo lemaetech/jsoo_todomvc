@@ -11,16 +11,31 @@ type t =
   ; complete_s: bool React.signal
   ; set_complete: bool -> unit }
 
-let create ?(complete = false) description =
+let create ?(complete = false) ?(id = Uuidm.create `V4) description =
   let editing_s, set_editing = React.S.create false in
   let complete_s, set_complete = React.S.create complete in
-  { description
-  ; complete
-  ; id= Uuidm.create `V4
-  ; editing_s
-  ; set_editing
-  ; complete_s
-  ; set_complete }
+  {description; complete; id; editing_s; set_editing; complete_s; set_complete}
+
+let json_encoding =
+  Json_encoding.(
+    obj3 (req "description" string) (req "complete" bool) (req "id" string))
+
+let to_json t =
+  Json_repr_browser.(
+    Json_encoding.construct json_encoding
+      (t.description, t.complete, Uuidm.to_string t.id)
+    |> js_stringify)
+
+let of_json s =
+  Json_repr_browser.(
+    parse_js_string s
+    |> Json_encoding.destruct json_encoding
+    |> fun (description, complete, id) ->
+    let open Result.O in
+    let* id =
+      Uuidm.of_string id |> Option.to_result ~none:"Invalid todo 'id' value."
+    in
+    Result.ok @@ create ~id ~complete description)
 
 let complete t = t.complete
 let active t = not t.complete

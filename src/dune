@@ -1,6 +1,7 @@
 (executable
  (name jsoo_todomvc)
  (modes js)
- (libraries uuidm js_of_ocaml js_of_ocaml-tyxml react reactiveData)
+ (libraries uuidm js_of_ocaml js_of_ocaml-tyxml react reactiveData
+   ocplib-json-typed ocplib-json-typed-browser)
  (preprocess
   (pps js_of_ocaml-ppx)))
