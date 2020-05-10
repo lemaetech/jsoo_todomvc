@@ -4,10 +4,7 @@ module Opt = struct
   include Js_of_ocaml.Js.Opt
 
   module O = struct
-    let ( let* ) = bind
-    let ( let+ ) = map
-    let ( >>= ) = bind
-    let ( >>| ) = map
+    let ( let* ) = bind let ( let+ ) = map let ( >>= ) = bind let ( >>| ) = map
   end
 end
 
@@ -29,18 +26,10 @@ module R = Js_of_ocaml_tyxml.Tyxml_js.R
 module To_dom = Js_of_ocaml_tyxml.Tyxml_js.To_dom
 module Log = Js_of_ocaml.Firebug
 
-type totals =
-  { total : int
-  ; completed : int
-  ; remaining : int
-  }
+type totals = {total: int; completed: int; remaining: int}
 
 let[@inline] ( >> ) f g x = g (f x)
 let enter_keycode = 13
 let esc_keycode = 27
 
-type filter =
-  [ `All
-  | `Active
-  | `Completed
-  ]
+type filter = [`All | `Active | `Completed]
