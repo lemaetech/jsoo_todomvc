@@ -54,7 +54,5 @@
    (>= 3.6.0))
   (js_of_ocaml-lwt
    (>= 3.6.0))
-  (js_of_ocaml-ppx_deriving_json
-   (>= 3.6.0))
   (js_of_ocaml-tyxml
    (>= 3.6.0))))

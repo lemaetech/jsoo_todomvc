@@ -3,4 +3,4 @@
  (modes js)
  (libraries uuidm js_of_ocaml js_of_ocaml-tyxml react reactiveData)
  (preprocess
-  (pps js_of_ocaml-ppx js_of_ocaml-ppx_deriving_json)))
+  (pps js_of_ocaml-ppx)))
