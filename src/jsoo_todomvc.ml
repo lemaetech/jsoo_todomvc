@@ -46,15 +46,13 @@ let of_json s =
   Json_repr_browser.(
     parse_js_string s
     |> Json_encoding.destruct json_encoding
-    |> List.map (fun (description, complete, id) ->
-           match Uuidm.of_string id with
-           | Some id -> Result.ok (Todo.create ~complete ~id description)
-           | None ->
-               Result.error @@ Printf.sprintf "Unable to decode id : %s" id)
     |> List.fold_left
-         (fun (todos, err_buf) -> function Ok todo -> (todo :: todos, err_buf)
-           | Error err_msg ->
-               Buffer.add_string err_buf @@ err_msg ^ "\n" ;
+         (fun (todos, err_buf) (description, complete, id) ->
+           match Uuidm.of_string id with
+           | Some id -> (Todo.create ~complete ~id description :: todos, err_buf)
+           | None ->
+               Buffer.add_string err_buf
+               @@ Printf.sprintf "Unable to decode id : %s" id ;
                (todos, err_buf))
          ([], Buffer.create 5))
 
