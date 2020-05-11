@@ -151,15 +151,14 @@ let main default_todos (_ : #Dom_html.event Js.t) =
     | Error (`Not_supported msg) ->
         Log.console##log (Js.string msg) ;
         None
-    | Ok storage ->
-        Log.console##log (Js.string "loading saved todos...") ;
-        Some storage in
+    | Ok storage -> Some storage in
   let todos =
     (let open Option.O in
     let* storage = storage in
     let+ json = Storage.get storage in
     let todos, err_buf = of_json json in
-    Log.console##log (Js.string @@ Buffer.contents err_buf) ;
+    if Buffer.length err_buf > 0 then
+      Log.console##log (Js.string @@ Buffer.contents err_buf) ;
     todos)
     |> Option.get ~default:default_todos in
   let ({dispatch; _} as t) = create todos storage in
