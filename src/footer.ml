@@ -41,9 +41,7 @@ let render t totals ~dispatch =
     React.S.map
       (fun {remaining; _} ->
         Printf.sprintf "%i %s left" remaining
-          ( if remaining <= 1 then "item"
-          else if remaining > 1 then "items"
-          else "" ))
+          (if remaining <= 1 then "item" else "items"))
       totals in
   footer
     ~a:[a_class ["footer"]]
