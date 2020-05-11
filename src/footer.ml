@@ -36,13 +36,13 @@ let filter_link lbl url filter t =
           (React.S.map (( = ) filter) t.filter_s) ]
     [txt lbl]
 
-let render t totals ~dispatch =
+let render t total_s ~dispatch =
   let items_left_txt =
     React.S.map
       (fun {remaining; _} ->
         Printf.sprintf "%i %s left" remaining
           (if remaining <= 1 then "item" else "items"))
-      totals in
+      total_s in
   footer
     ~a:[a_class ["footer"]]
     [ span ~a:[a_class ["todo-count"]] [R.Html.txt items_left_txt]
@@ -55,7 +55,7 @@ let render t totals ~dispatch =
         ~a:
           [ a_class ["clear-completed"]
           ; R.filter_attrib (a_style "display:none")
-              (React.S.map (fun {completed; _} -> completed <= 0) totals)
+              (React.S.map (fun {completed; _} -> completed <= 0) total_s)
           ; a_onclick (fun _ ->
                 dispatch @@ Some `Clear_completed ;
                 true) ]
