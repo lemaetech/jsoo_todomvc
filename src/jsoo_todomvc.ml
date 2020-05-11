@@ -3,7 +3,7 @@ open Html
 
 (*----------------------------------------------------------------------
  * Variable Naming Convention :- 
- * _s   - denotes a signal type React.S.t. Signals are dynamic and the
+ * _s   : denotes a signal type React.S.t. Signals are dynamic and the
  *        value it encodes change according to input. 
  *----------------------------------------------------------------------*)
 module Indextbl = Hashtbl.Make (struct
