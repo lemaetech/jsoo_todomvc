@@ -2,10 +2,9 @@ open Std
 open Html
 
 (*----------------------------------------------------------------------
- * Naming Conventions :- 
+ * Variable Naming Convention :- 
  * _s   - denotes a signal type React.S.t. Signals are dynamic and the
  *        value it encodes change according to input. 
- * _tbl - denotes a Hashtbl.t
  *----------------------------------------------------------------------*)
 module Indextbl = Hashtbl.Make (struct
   type t = Uuidm.t
