@@ -11,9 +11,11 @@ end
 module Option = struct
   include Option
 
+  let get ~default o = match o with Some a -> a | None -> default
+
   module O = struct
     let ( let* ) = bind
-    let ( let+ ) = map
+    let ( let+ ) o f = map f o
     let ( >>= ) = ( let* )
     let ( >>| ) = ( let+ )
   end

@@ -20,6 +20,7 @@ type t =
   ; total_s: totals React.S.t (* Monitors todo list totals. *)
   ; index_tbl: int Indextbl.t (* Hashtbl to store 'rl' index of a Todo.t. *)
   ; dispatch: action option -> unit (* Dispatch action. *)
+  ; storage: Storage.t option (* Browser localStorage.*)
   ; mutable markall_completed: bool (* Markall completed state. *) }
 
 and action =
@@ -33,10 +34,34 @@ let update_index rl index_tbl =
   let todos = RList.value rl in
   List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos
 
+let json_encoding = Json_encoding.(list Todo.json_encoding)
+
+let to_json t =
+  Json_repr_browser.(
+    Json_encoding.construct json_encoding
+      (RList.value t.rl |> List.map Todo.to_json_value)
+    |> js_stringify)
+
+let of_json s =
+  Json_repr_browser.(
+    parse_js_string s
+    |> Json_encoding.destruct json_encoding
+    |> List.map (fun (description, complete, id) ->
+           match Uuidm.of_string id with
+           | Some id -> Result.ok (Todo.create ~complete ~id description)
+           | None ->
+               Result.error @@ Printf.sprintf "Unable to decode id : %s" id)
+    |> List.fold_left
+         (fun (todos, err_buf) -> function Ok todo -> (todo :: todos, err_buf)
+           | Error err_msg ->
+               Buffer.add_string err_buf @@ err_msg ^ "\n" ;
+               (todos, err_buf))
+         ([], Buffer.create 5))
+
 let update_state t action =
   let do_if_index_found todo f =
     Todo.id todo |> Indextbl.find_opt t.index_tbl |> Option.iter f in
-  match action with
+  ( match action with
   | `Add todo ->
       RList.snoc todo t.rh ;
       update_index t.rl t.index_tbl
@@ -53,9 +78,10 @@ let update_state t action =
       RList.value t.rl
       |> List.map (Todo.set_complete ~complete:toggle)
       |> RList.set t.rh ;
-      update_index t.rl t.index_tbl
+      update_index t.rl t.index_tbl ) ;
+  Option.iter (fun s -> to_json t |> Storage.put s) t.storage
 
-let create todos =
+let create todos storage =
   let calculate_totals rl =
     let todos = RList.value rl in
     let total = List.length todos in
@@ -66,7 +92,9 @@ let create todos =
   let index_tbl = Indextbl.create (List.length todos) in
   let total_s, set_total = React.S.create @@ calculate_totals rl in
   let action_s, dispatch = React.S.create None in
-  let t = {rl; rh; index_tbl; total_s; markall_completed= false; dispatch} in
+  let t =
+    {rl; rh; index_tbl; total_s; markall_completed= false; dispatch; storage}
+  in
   update_index rl index_tbl ;
   (*---------------------------------------
     Attach reactive mappers/observers.
@@ -120,8 +148,24 @@ let info_footer =
     ; p [txt "Part of "; a ~a:[a_href "http://todomvc.com"] [txt "TodoMVC"]] ]
   |> To_dom.of_footer
 
-let main todos (_ : #Dom_html.event Js.t) =
-  let ({dispatch; _} as t) = create todos in
+let main default_todos (_ : #Dom_html.event Js.t) =
+  let storage =
+    match Storage.create () with
+    | Error (`Not_supported msg) ->
+        Log.console##log (Js.string msg) ;
+        None
+    | Ok storage ->
+        Log.console##log (Js.string "loading saved todos...") ;
+        Some storage in
+  let todos =
+    (let open Option.O in
+    let* storage = storage in
+    let+ json = Storage.get storage in
+    let todos, err_buf = of_json json in
+    Log.console##log (Js.string @@ Buffer.contents err_buf) ;
+    todos)
+    |> Option.get ~default:default_todos in
+  let ({dispatch; _} as t) = create todos storage in
   let todo_app =
     section ~a:[a_class ["todoapp"]] [New_todo.render ~dispatch; main_section t]
     |> To_dom.of_section in

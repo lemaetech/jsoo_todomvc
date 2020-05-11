@@ -20,23 +20,7 @@ let json_encoding =
   Json_encoding.(
     obj3 (req "description" string) (req "complete" bool) (req "id" string))
 
-let to_json t =
-  Json_repr_browser.(
-    Json_encoding.construct json_encoding
-      (t.description, t.complete, Uuidm.to_string t.id)
-    |> js_stringify)
-
-let of_json s =
-  Json_repr_browser.(
-    parse_js_string s
-    |> Json_encoding.destruct json_encoding
-    |> fun (description, complete, id) ->
-    let open Result.O in
-    let* id =
-      Uuidm.of_string id |> Option.to_result ~none:"Invalid todo 'id' value."
-    in
-    Result.ok @@ create ~id ~complete description)
-
+let to_json_value t = (t.description, t.complete, Uuidm.to_string t.id)
 let complete t = t.complete
 let active t = not t.complete
 let id t = t.id
