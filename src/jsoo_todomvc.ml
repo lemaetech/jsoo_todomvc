@@ -17,11 +17,11 @@ end)
 type t =
   { rl: Todo.t RList.t (* Reactive Todo.t list store. *)
   ; rh: Todo.t RList.handle (* Reactive Todo.t list handle to 'rl'. *)
-  ; total_s: totals React.S.t (* Monitors todo list totals. *)
-  ; index_tbl: int Indextbl.t (* Hashtbl to store 'rl' index of a Todo.t. *)
+  ; total_s: totals React.S.t (* Todo list totals change signal. *)
+  ; index_tbl: int Indextbl.t (* Tbl: key - Todo.id; value - index in 'rl'. *)
   ; dispatch: action option -> unit (* Dispatch action. *)
-  ; storage: Storage.t option (* Browser localStorage.*)
-  ; mutable markall_completed: bool (* Markall completed state. *) }
+  ; storage: Storage.t option (* Browser localStorage. *)
+  ; mutable markall_complete: bool (* Markall todos as complete. *) }
 
 and action =
   [ `Add of Todo.t
@@ -72,7 +72,7 @@ let update_state t action =
       RList.value t.rl |> List.filter (Todo.complete >> not) |> RList.set t.rh ;
       update_index t.rl t.index_tbl
   | `Toggle_all toggle ->
-      t.markall_completed <- toggle ;
+      t.markall_complete <- toggle ;
       RList.value t.rl
       |> List.map (Todo.set_complete ~complete:toggle)
       |> RList.set t.rh ;
@@ -91,7 +91,7 @@ let create todos storage =
   let total_s, set_total = React.S.create @@ calculate_totals rl in
   let action_s, dispatch = React.S.create None in
   let t =
-    {rl; rh; index_tbl; total_s; markall_completed= false; dispatch; storage}
+    {rl; rh; index_tbl; total_s; markall_complete= false; dispatch; storage}
   in
   update_index rl index_tbl ;
   (*---------------------------------------
@@ -104,7 +104,7 @@ let create todos storage =
   in
   let (_ : unit React.signal) =
     React.S.map
-      (fun {total; completed; _} -> t.markall_completed <- total = completed)
+      (fun {total; completed; _} -> t.markall_complete <- total = completed)
       t.total_s in
   t
 
@@ -125,8 +125,7 @@ let main_section ({dispatch; _} as t) =
                  (fun {total; completed; _} -> total = completed)
                  t.total_s)
           ; a_onclick (fun _ ->
-                `Toggle_all (not t.markall_completed)
-                |> (Option.some >> dispatch) ;
+                `Toggle_all (not t.markall_complete) |> (Option.some >> dispatch) ;
                 true) ]
         ()
     ; label ~a:[a_label_for "toggle-all"] [txt "Mark all as complete"]
