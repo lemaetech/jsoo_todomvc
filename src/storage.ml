@@ -1,11 +1,11 @@
 open Std
 open Result.O
 
-type t = { storage : Dom_html.storage Js.t }
+type t = Dom_html.storage Js.t
 
 let key = Js.string "jsoo-todomvc"
-let get t = t.storage##getItem key |> Js.Opt.to_option
-let put t s = t.storage##setItem key s
+let get t = t##getItem key |> Js.Opt.to_option
+let put t s = t##setItem key s
 
 let create () =
   let* storage =
@@ -17,5 +17,5 @@ let create () =
             "HTML5 localStorage functionality not supported by this browser"))
       Result.ok
   in
-  Ok { storage }
+  Ok storage
 ;;
