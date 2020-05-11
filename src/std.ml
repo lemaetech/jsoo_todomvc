@@ -11,6 +11,19 @@ end
 module Option = struct
   include Option
 
+  let get ~default o = match o with Some a -> a | None -> default
+
+  module O = struct
+    let ( let* ) = bind
+    let ( let+ ) o f = map f o
+    let ( >>= ) = ( let* )
+    let ( >>| ) = ( let+ )
+  end
+end
+
+module Result = struct
+  include Stdlib.Result
+
   module O = struct
     let ( let* ) = bind
     let ( let+ ) = map
