@@ -45,8 +45,8 @@ let of_json s =
   Json_repr_browser.(
     parse_js_string s
     |> Json_encoding.destruct json_encoding
-    |> List.fold_left
-         (fun (todos, err_buf) (description, complete, id) ->
+    |> List.fold_right
+         (fun (description, complete, id) (todos, err_buf) ->
            match Uuidm.of_string id with
            | Some id -> (Todo.create ~complete ~id description :: todos, err_buf)
            | None ->

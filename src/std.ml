@@ -26,10 +26,16 @@ module Result = struct
 
   module O = struct
     let ( let* ) = bind
-    let ( let+ ) = map
+    let ( let+ ) o f = map f o
     let ( >>= ) = ( let* )
     let ( >>| ) = ( let+ )
   end
+end
+
+module List = struct
+  include Stdlib.List
+
+  let fold_right f b l = List.fold_right f l b
 end
 
 module RList = ReactiveData.RList
