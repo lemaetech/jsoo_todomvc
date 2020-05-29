@@ -2,7 +2,7 @@
 
 Todo MVC implemented in js_of_ocaml
 
-https://bikallem.github.io/jsoo_todomvc/
+[Running Demo](https://bikallem.github.io/jsoo_todomvc/)
 
 ## Building the project (requires opam v2.1.0 or higher)
 
