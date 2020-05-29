@@ -10,19 +10,13 @@ f fmt :
 c clean : 
 	dune clean 
 
-lock : 
-	opam lock .
-
 install: 
 	opam install . --deps-only --working-dir --with-test
 
-lock-install :
-	opam install . --locked --deps-only --working-dir --with-test
-
 dev-switch : 
-	opam switch create . ocaml-base-compiler.4.10.0 --deps-only --with-test --locked --working-dir
+	opam switch create . ocaml-base-compiler.4.10.0 --deps-only --with-test --working-dir
 
 open :
 	xdg-open _build/default/src/index.html
 
-.PHONY: b build p prod f fmt c clean lock install lock-install dev-switch open 
+.PHONY: b build p prod f fmt c clean install dev-switch open 
