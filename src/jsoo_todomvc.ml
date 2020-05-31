@@ -18,7 +18,7 @@ type t =
   ; rh : Todo.t RList.handle (* Reactive Todo.t list handle to 'rl'. *)
   ; total_s : totals React.S.t (* Todo list totals change signal. *)
   ; index_tbl : int Indextbl.t (* Tbl: key - Todo.id; value - index in 'rl'. *)
-  ; dispatch : action option -> unit (* Dispatch action. *)
+  ; dispatch : action -> unit (* Dispatch action. *)
   ; storage : Storage.t option (* Browser localStorage. *)
   ; mutable markall_complete : bool (* Markall todos as complete. *)
   }
@@ -91,13 +91,13 @@ let create todos storage =
   let rl, rh = RList.create todos in
   let index_tbl = Indextbl.create (List.length todos) in
   let total_s, set_total = React.S.create @@ calculate_totals rl in
-  let action_s, dispatch = React.S.create None in
+  let action_s, dispatch = React.E.create () in
   let t = { rl; rh; index_tbl; total_s; markall_complete = false; dispatch; storage } in
   update_index rl index_tbl;
   (*---------------------------------------
     Attach reactive mappers/observers.
     ---------------------------------------*)
-  let (_ : unit React.S.t) = React.S.map (Option.iter (update_state t)) action_s in
+  let (_ : unit React.E.t) = React.E.map (update_state t) action_s in
   let (_ : unit React.event) =
     RList.event rl |> React.E.map (fun _ -> set_total @@ calculate_totals rl)
   in
@@ -127,7 +127,7 @@ let main_section ({ dispatch; _ } as t) =
               (a_checked ())
               (React.S.map (fun { total; completed; _ } -> total = completed) t.total_s)
           ; a_onclick (fun _ ->
-                `Toggle_all (not t.markall_complete) |> (Option.some >> dispatch);
+                `Toggle_all (not t.markall_complete) |> dispatch;
                 true)
           ]
         ()

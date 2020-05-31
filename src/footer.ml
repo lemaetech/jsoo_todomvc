@@ -66,7 +66,7 @@ let render t total_s ~dispatch =
               (a_style "display:none")
               (React.S.map (fun { completed; _ } -> completed <= 0) total_s)
           ; a_onclick (fun _ ->
-                dispatch @@ Some `Clear_completed;
+                dispatch @@ `Clear_completed;
                 true)
           ]
         [ txt "Clear completed" ]

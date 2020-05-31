@@ -55,8 +55,7 @@ let todo_input t dispatch =
        let+ input = CoerceTo.input target in
        Js.to_string input##.value)
       |> fun o ->
-      Opt.iter o (fun description ->
-          `Update { t with description } |> (Option.some >> dispatch))
+      Opt.iter o (fun description -> `Update { t with description } |> dispatch)
     else if evt##.keyCode = esc_keycode
     then (
       t.set_editing false;
@@ -90,7 +89,7 @@ let render t ~dispatch ~filter_s =
   let complete_toggler =
     let handle_onclick (_ : #Dom_html.event Js.t) =
       let complete = not t.complete in
-      `Update { t with complete } |> (Option.some >> dispatch);
+      `Update { t with complete } |> dispatch;
       t.set_complete complete;
       true
     in
@@ -105,7 +104,7 @@ let render t ~dispatch ~filter_s =
   in
   let todo_input = todo_input t dispatch in
   let handle_destroy (_ : #Dom_html.event Js.t) =
-    dispatch @@ Some (`Destroy t);
+    dispatch (`Destroy t);
     true
   in
   li

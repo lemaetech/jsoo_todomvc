@@ -12,6 +12,6 @@ val to_json_value : t -> string * bool * string
 
 val render
   :  t
-  -> dispatch:([> `Update of t | `Destroy of t ] option -> unit)
+  -> dispatch:([> `Update of t | `Destroy of t ] -> unit)
   -> filter_s:filter React.S.t
   -> [> Html_types.li ] Html.elt

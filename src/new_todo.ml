@@ -12,7 +12,7 @@ let handle_key_down dispatch evt =
      todo, fun () -> input##.value := Js.string "")
     |> fun o ->
     Opt.iter o (fun (todo, reset) ->
-        `Add todo |> (Option.some >> dispatch);
+        `Add todo |> dispatch;
         reset ())
   else ();
   true
