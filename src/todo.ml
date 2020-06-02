@@ -2,30 +2,43 @@ open Std
 open Html
 open Dom_html
 
-type t =
-  { description : string
-  ; complete : bool
-  ; id : Uuidm.t
-  ; editing_s : bool React.signal
-  ; set_editing : bool -> unit
-  ; complete_s : bool React.signal
-  ; set_complete : bool -> unit
-  }
+type t = {
+  description : string;
+  complete : bool;
+  id : Uuidm.t;
+  editing_s : bool React.signal;
+  set_editing : bool -> unit;
+  complete_s : bool React.signal;
+  set_complete : bool -> unit;
+}
 
 let create ?(complete = false) ?(id = Uuidm.create `V4) description =
   let editing_s, set_editing = React.S.create false in
   let complete_s, set_complete = React.S.create complete in
-  { description; complete; id; editing_s; set_editing; complete_s; set_complete }
-;;
+  {
+    description;
+    complete;
+    id;
+    editing_s;
+    set_editing;
+    complete_s;
+    set_complete;
+  }
+
 
 let json_encoding =
-  Json_encoding.(obj3 (req "description" string) (req "complete" bool) (req "id" string))
-;;
+  Json_encoding.(
+    obj3 (req "description" string) (req "complete" bool) (req "id" string))
 
-let to_json_value t = t.description, t.complete, Uuidm.to_string t.id
+
+let to_json_value t = (t.description, t.complete, Uuidm.to_string t.id)
+
 let complete t = t.complete
+
 let active t = not t.complete
+
 let id t = t.id
+
 let set_complete t ~complete = { t with complete }
 
 let handle_dblclick t todo_input _ =
@@ -33,14 +46,13 @@ let handle_dblclick t todo_input _ =
   let dom_inp = To_dom.of_input todo_input in
   dom_inp##focus;
   true
-;;
+
 
 let todo_input t dispatch =
   let open Opt.O in
   let reset_input input_elem =
-    input_elem
-    >>= CoerceTo.input
-    |> fun o -> Opt.iter o (fun input -> input##.value := Js.string t.description)
+    input_elem >>= CoerceTo.input |> fun o ->
+    Opt.iter o (fun input -> input##.value := Js.string t.description)
   in
   let handle_onblur evt =
     t.set_editing false;
@@ -48,32 +60,31 @@ let todo_input t dispatch =
     true
   in
   let handle_key_down evt =
-    if evt##.keyCode = enter_keycode
-    then
-      (t.set_editing false;
-       let* target = evt##.target in
-       let+ input = CoerceTo.input target in
-       Js.to_string input##.value)
+    if evt##.keyCode = enter_keycode then
+      ( t.set_editing false;
+        let* target = evt##.target in
+        let+ input = CoerceTo.input target in
+        Js.to_string input##.value )
       |> fun o ->
       Opt.iter o (fun description -> `Update { t with description } |> dispatch)
-    else if evt##.keyCode = esc_keycode
-    then (
+    else if evt##.keyCode = esc_keycode then (
       t.set_editing false;
-      reset_input evt##.target)
+      reset_input evt##.target )
     else ();
     true
   in
   input
     ~a:
-      [ a_id (Uuidm.to_string t.id)
-      ; a_input_type `Text
-      ; a_class [ "edit" ]
-      ; a_value t.description
-      ; a_onblur handle_onblur
-      ; a_onkeydown handle_key_down
+      [
+        a_id (Uuidm.to_string t.id);
+        a_input_type `Text;
+        a_class [ "edit" ];
+        a_value t.description;
+        a_onblur handle_onblur;
+        a_onkeydown handle_key_down;
       ]
     ()
-;;
+
 
 let render t ~dispatch ~filter_s =
   t.set_complete t.complete;
@@ -81,9 +92,7 @@ let render t ~dispatch ~filter_s =
     let cls_attr = if complete t then [ "completed" ] else [] in
     R.Html.a_class
     @@ React.S.map
-         (function
-           | true -> "editing" :: cls_attr
-           | false -> cls_attr)
+         (function true -> "editing" :: cls_attr | false -> cls_attr)
          t.editing_s
   in
   let complete_toggler =
@@ -95,10 +104,11 @@ let render t ~dispatch ~filter_s =
     in
     input
       ~a:
-        [ a_class [ "toggle" ]
-        ; a_input_type `Checkbox
-        ; a_onclick handle_onclick
-        ; R.filter_attrib (a_checked ()) (React.S.map Fun.id t.complete_s)
+        [
+          a_class [ "toggle" ];
+          a_input_type `Checkbox;
+          a_onclick handle_onclick;
+          R.filter_attrib (a_checked ()) (React.S.map Fun.id t.complete_s);
         ]
       ()
   in
@@ -109,22 +119,25 @@ let render t ~dispatch ~filter_s =
   in
   li
     ~a:
-      [ li_cls_attr
-      ; R.filter_attrib
-          (a_style "display:none")
+      [
+        li_cls_attr;
+        R.filter_attrib (a_style "display:none")
           (React.S.map
              (function
                | `All -> false
                | `Active -> not (active t)
                | `Completed -> not (complete t))
-             filter_s)
+             filter_s);
       ]
-    [ div
+    [
+      div
         ~a:[ a_class [ "view" ] ]
-        [ complete_toggler
-        ; label ~a:[ a_ondblclick @@ handle_dblclick t todo_input ] [ txt t.description ]
-        ; button ~a:[ a_class [ "destroy" ]; a_onclick handle_destroy ] []
-        ]
-    ; todo_input
+        [
+          complete_toggler;
+          label
+            ~a:[ a_ondblclick @@ handle_dblclick t todo_input ]
+            [ txt t.description ];
+          button ~a:[ a_class [ "destroy" ]; a_onclick handle_destroy ] [];
+        ];
+      todo_input;
     ]
-;;
