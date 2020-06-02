@@ -2,9 +2,8 @@ open Std
 open Html
 
 type t = {
-  filter_s : filter React.S.t;
-  (* filter change signal. *)
-  change_filter : filter -> unit; (* change current filter. *)
+  filter_s : filter React.S.t;  (** filter change signal. *)
+  change_filter : filter -> unit;  (** change current filter. *)
 }
 
 let filter_s t = t.filter_s

@@ -15,19 +15,13 @@ module Indextbl = Hashtbl.Make (struct
 end)
 
 type t = {
-  rl : Todo.t RList.t;
-  (* Reactive Todo.t list store. *)
-  rh : Todo.t RList.handle;
-  (* Reactive Todo.t list handle to 'rl'. *)
-  total_s : totals React.S.t;
-  (* Todo list totals change signal. *)
-  index_tbl : int Indextbl.t;
-  (* Tbl: key - Todo.id; value - index in 'rl'. *)
-  dispatch : action -> unit;
-  (* Dispatch action. *)
-  storage : Storage.t option;
-  (* Browser localStorage. *)
-  mutable markall_complete : bool; (* Markall todos as complete. *)
+  rl : Todo.t RList.t;  (** Reactive Todo.t list store. *)
+  rh : Todo.t RList.handle;  (** Reactive Todo.t list handle to 'rl'. *)
+  total_s : totals React.S.t;  (** Todo list totals change signal. *)
+  index_tbl : int Indextbl.t;  (** Tbl: key - Todo.id; value - index in 'rl'. *)
+  dispatch : action -> unit;  (** Dispatch action. *)
+  storage : Storage.t option;  (** Browser localStorage. *)
+  mutable markall_complete : bool;  (** Markall todos as complete. *)
 }
 
 and action =
@@ -109,6 +103,7 @@ let create todos storage =
     { rl; rh; index_tbl; total_s; markall_complete = false; dispatch; storage }
   in
   update_index rl index_tbl;
+
   (*---------------------------------------
     Attach reactive mappers/observers.
     ---------------------------------------*)
