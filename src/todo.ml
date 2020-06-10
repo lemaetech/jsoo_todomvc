@@ -25,11 +25,9 @@ let create ?(complete = false) ?(id = Uuidm.create `V4) description =
     set_complete;
   }
 
-
 let json_encoding =
   Json_encoding.(
     obj3 (req "description" string) (req "complete" bool) (req "id" string))
-
 
 let to_json_value t = (t.description, t.complete, Uuidm.to_string t.id)
 
@@ -46,7 +44,6 @@ let handle_dblclick t todo_input _ =
   let dom_inp = To_dom.of_input todo_input in
   dom_inp##focus;
   true
-
 
 let todo_input t dispatch =
   let open Opt.O in
@@ -84,7 +81,6 @@ let todo_input t dispatch =
         a_onkeydown handle_key_down;
       ]
     ()
-
 
 let render t ~dispatch ~filter_s =
   t.set_complete t.complete;

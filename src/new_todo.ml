@@ -16,7 +16,6 @@ let handle_key_down dispatch evt =
   else ();
   true
 
-
 let render ~dispatch =
   header
     ~a:[ a_class [ "header" ] ]

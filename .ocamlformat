@@ -1,4 +1,3 @@
 version=0.14.2
 profile = conventional
-let-binding-spacing = sparse
 parse-docstrings = true

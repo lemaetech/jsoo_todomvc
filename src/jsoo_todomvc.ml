@@ -35,7 +35,6 @@ let update_index rl index_tbl =
   let todos = RList.value rl in
   List.iteri (fun i todo -> Indextbl.replace index_tbl (Todo.id todo) i) todos
 
-
 let json_encoding = Json_encoding.(list Todo.json_encoding)
 
 let to_json t =
@@ -43,7 +42,6 @@ let to_json t =
     Json_encoding.construct json_encoding
       (RList.value t.rl |> List.map Todo.to_json_value)
     |> js_stringify)
-
 
 let of_json s =
   Json_repr_browser.(
@@ -58,7 +56,6 @@ let of_json s =
                @@ Printf.sprintf "Unable to decode id : %s" id;
                (todos, err_buf))
          ([], Buffer.create 5))
-
 
 let update_state t action =
   let do_if_index_found todo f =
@@ -83,7 +80,6 @@ let update_state t action =
       |> RList.set t.rh;
       update_index t.rl t.index_tbl );
   Option.iter (fun s -> to_json t |> Storage.put s) t.storage
-
 
 let create todos storage =
   let calculate_totals rl =
@@ -118,7 +114,6 @@ let create todos storage =
   in
   t
 
-
 let main_section ({ dispatch; _ } as t) =
   let footer = Footer.create () in
   section
@@ -152,7 +147,6 @@ let main_section ({ dispatch; _ } as t) =
       Footer.render footer t.total_s ~dispatch;
     ]
 
-
 let info_footer =
   footer
     ~a:[ a_class [ "info" ] ]
@@ -169,7 +163,6 @@ let info_footer =
         ];
     ]
   |> To_dom.of_footer
-
 
 let main default_todos (_ : #Dom_html.event Js.t) =
   let storage =
@@ -200,7 +193,6 @@ let main default_todos (_ : #Dom_html.event Js.t) =
   |> List.iter (fun elem ->
          Dom.appendChild (Dom_html.getElementById "app") elem);
   Js.bool true
-
 
 let () =
   let todos =

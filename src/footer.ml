@@ -19,7 +19,6 @@ let current_filter () =
   | "completed" :: _ -> `Completed
   | [] | _ -> `All
 
-
 let configure_onfilterchange change_filter =
   let handle_hashchange (_ : #Dom_html.hashChangeEvent Js.t) =
     current_filter () |> change_filter;
@@ -27,12 +26,10 @@ let configure_onfilterchange change_filter =
   in
   Dom_html.window##.onhashchange := Dom_html.handler @@ handle_hashchange
 
-
 let create () =
   let filter_s, change_filter = React.S.create @@ current_filter () in
   configure_onfilterchange change_filter;
   { filter_s; change_filter }
-
 
 let filter_link lbl url filter t =
   a
@@ -44,7 +41,6 @@ let filter_link lbl url filter t =
           (React.S.map (( = ) filter) t.filter_s);
       ]
     [ txt lbl ]
-
 
 let render t total_s ~dispatch =
   let items_left_txt =
