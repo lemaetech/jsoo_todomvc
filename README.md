@@ -2,7 +2,7 @@
 
 Todo MVC implemented in js_of_ocaml
 
-[Running Demo](https://bikallem.github.io/jsoo_todomvc/)
+[Running Demo](https://lemaetech.github.io/jsoo_todomvc/)
 
 ```
 git clone git@github.com:bikallem/jsoo_todomvc.git
