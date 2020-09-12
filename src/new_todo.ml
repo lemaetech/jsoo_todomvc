@@ -11,23 +11,19 @@ let handle_key_down dispatch evt =
      (todo, fun () -> input##.value := Js.string ""))
     |> fun o ->
     Opt.iter o (fun (todo, reset) ->
-        `Add todo |> dispatch;
+        `Add todo |> dispatch ;
         reset ())
-  else ();
+  else () ;
   true
 
 let render ~dispatch =
   header
-    ~a:[ a_class [ "header" ] ]
-    [
-      h1 [ txt "todos" ];
-      input
+    ~a:[a_class ["header"]]
+    [ h1 [txt "todos"]
+    ; input
         ~a:
-          [
-            a_class [ "new-todo" ];
-            a_placeholder "What needs to be done?";
-            a_autofocus ();
-            a_onkeydown @@ handle_key_down dispatch;
-          ]
-        ();
-    ]
+          [ a_class ["new-todo"]
+          ; a_placeholder "What needs to be done?"
+          ; a_autofocus ()
+          ; a_onkeydown @@ handle_key_down dispatch ]
+        () ]

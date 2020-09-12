@@ -4,9 +4,7 @@ open Result.O
 type t = Dom_html.storage Js.t
 
 let key = Js.string "jsoo-todomvc"
-
 let get t = t##getItem key |> Js.Opt.to_option
-
 let put t s = t##setItem key s
 
 let create () =
